@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://6buicxxj4a1p"]
 
-[ext_resource type="Script" uid="uid://qwqisgmfx3je" path="res://scripts/game.gd" id="1_m35v1"]
+[ext_resource type="Script" uid="uid://ctg4hq0pqoufy" path="res://scripts/game_controller.gd" id="1_m35v1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xgd6b"]
 font_size = 24
@@ -20,9 +20,6 @@ font_size = 18
 
 [node name="Game" type="Node" unique_id=1816172938]
 script = ExtResource("1_m35v1")
-total_rows = 20
-total_columns = 16
-total_mines = 40
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1460956653]
 anchors_preset = 15

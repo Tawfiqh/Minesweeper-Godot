@@ -8,8 +8,8 @@ var virtual_pos: int = 0
 var row: int = 0
 var column: int = 0
 
-# state of the tile based on the enum in the Game scene
-var state: int = 0
+# state of the tile (GameModel.States)
+var state: int = GameModel.States.SAFE
 
 # number of mines near this tile
 var mines_nearby: int = 0
