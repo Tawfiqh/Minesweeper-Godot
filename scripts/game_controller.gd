@@ -4,6 +4,17 @@ extends Node3D
 # Node references
 @onready var tile_container: Node3D = $TileContainer
 
+const baseColourSaturation: float = 0.4
+const CAUTION_1 = Color(0, 0, baseColourSaturation)
+const CAUTION_2 = Color(0, baseColourSaturation, 0)
+const CAUTION_3 = Color(baseColourSaturation, 0, 0)
+const CAUTION_4 = Color(baseColourSaturation, baseColourSaturation, 0)
+const CAUTION_5 = Color(0, baseColourSaturation, baseColourSaturation)
+const CAUTION_6 = Color(baseColourSaturation, 0, baseColourSaturation)
+const CAUTION_7 = Color(baseColourSaturation, 0.1 * baseColourSaturation, baseColourSaturation)
+const CAUTION_8 = Color(baseColourSaturation, 0.2 * baseColourSaturation, baseColourSaturation)
+const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
+
 
 @onready var mine_counter: Label = $CanvasLayer/Control/MineCounter
 @onready var time_elapsed: Label = $CanvasLayer/Control/TimeElapsed
@@ -117,14 +128,25 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 	match tile.state:
 		GameModel.States.SAFE:
 			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-			mat.albedo_color = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
+			mat.albedo_color = SAFE
 			
 		GameModel.States.MINE:
 			mat.albedo_color = Color(0.75, 0.15, 0.15) # RED
 		GameModel.States.CAUTION:
-			var n: int = tile.mines_nearby
-			var t: float = (n - 1) / 7.0
-			mat.albedo_color = Color(1.0 - t * 0.5, 0.6 + t * 0.3, 0.2)
+			match tile.mines_nearby:
+				1: mat.albedo_color = CAUTION_1
+				2: mat.albedo_color = CAUTION_2
+				3: mat.albedo_color = CAUTION_3
+				4: mat.albedo_color = CAUTION_4
+				5: mat.albedo_color = CAUTION_5
+				6: mat.albedo_color = CAUTION_6
+				7: mat.albedo_color = CAUTION_7
+				8: mat.albedo_color = CAUTION_8
+				_: mat.albedo_color = SAFE
+
+			# var n: int = tile.mines_nearby
+			# var t: float = (n - 1) / 7.0
+			# mat.albedo_color = Color(1.0 - t * 0.5, 0.6 + t * 0.3, 0.2)
 	return mat
 
 
