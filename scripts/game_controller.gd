@@ -169,6 +169,8 @@ func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
 		return
 
 	if mouse_button == MOUSE_BUTTON_RIGHT:
+		# print("\n [GameController] tile_pressed right virtual_pos=%s" % virtual_pos)
+		# print("tile.is_flagged=%s" % tile.is_flagged)
 		if not tile.is_flagged:
 			tile.is_flagged = true
 			model.mine_guesses -= 1

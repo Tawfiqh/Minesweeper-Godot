@@ -23,6 +23,9 @@ var is_flagged: bool = false
 @onready var mesh_instance: CSGBox3D = $MainBox
 @onready var number_label: Label3D = $NumberLabel
 
+const DEBOUNCE_MS: int = 250
+var _last_click_time: int = 0
+
 
 func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
 	if not event is InputEventMouseButton:
@@ -30,7 +33,11 @@ func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _n
 	var mb: InputEventMouseButton = event
 	if not mb.pressed or not is_hidden:
 		return
-	print("[Tile] input_event virtual_pos=%s button_index=%s" % [virtual_pos, mb.button_index])
+	var now: int = Time.get_ticks_msec()
+	if now - _last_click_time < DEBOUNCE_MS:
+		return
+	_last_click_time = now
+	print("🔪🔪[Tile] input_event virtual_pos=%s button_index=%s" % [virtual_pos, mb.button_index])
 	match mb.button_index:
 		MOUSE_BUTTON_LEFT:
 			SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_LEFT)
