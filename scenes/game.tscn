@@ -1,23 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://6buicxxj4a1p"]
+[gd_scene format=3 uid="uid://6buicxxj4a1p"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_m35v1"]
+[ext_resource type="Script" uid="uid://qwqisgmfx3je" path="res://scripts/game.gd" id="1_m35v1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xgd6b"]
 font_size = 24
 
+[sub_resource type="SystemFont" id="SystemFont_uwrxv"]
+
 [sub_resource type="LabelSettings" id="LabelSettings_d4yan"]
-font_size = 32
+font = SubResource("SystemFont_uwrxv")
+font_size = 75
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(3, 3)
 
 [sub_resource type="LabelSettings" id="LabelSettings_b1gra"]
 font_size = 18
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" unique_id=1816172938]
 script = ExtResource("1_m35v1")
 total_rows = 20
 total_columns = 16
 total_mines = 40
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1460956653]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -25,7 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.242188, 0.242188, 0.242188, 1)
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=999590835]
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
@@ -34,7 +41,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Easy" type="Button" parent="Control"]
+[node name="Easy" type="Button" parent="Control" unique_id=755118882]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 544.0
@@ -44,7 +51,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Easy"
 
-[node name="Normal" type="Button" parent="Control"]
+[node name="Normal" type="Button" parent="Control" unique_id=945313388]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 624.0
@@ -54,7 +61,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Normal"
 
-[node name="Hard" type="Button" parent="Control"]
+[node name="Hard" type="Button" parent="Control" unique_id=276590313]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 704.0
@@ -64,7 +71,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Hard"
 
-[node name="CustomGame" type="Button" parent="Control"]
+[node name="CustomGame" type="Button" parent="Control" unique_id=709477558]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 704.0
@@ -74,7 +81,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Custom game"
 
-[node name="MineCounter" type="Label" parent="Control"]
+[node name="MineCounter" type="Label" parent="Control" unique_id=2078309711]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 48.0
@@ -83,7 +90,7 @@ offset_bottom = 82.0
 text = "MINES: 999999"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="TimeElapsed" type="Label" parent="Control"]
+[node name="TimeElapsed" type="Label" parent="Control" unique_id=454706794]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 96.0
@@ -92,16 +99,25 @@ offset_bottom = 130.0
 text = "TIME: 999:99"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="Message" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 48.0
-offset_top = 192.0
-offset_right = 224.0
-offset_bottom = 237.0
+[node name="Message" type="Label" parent="Control" unique_id=464018184]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -296.25
+offset_top = -85.25
+offset_right = 296.25
+offset_bottom = 85.25
+grow_horizontal = 2
+grow_vertical = 2
 text = "MESSAGE"
 label_settings = SubResource("LabelSettings_d4yan")
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="RowCounter" type="Label" parent="Control"]
+[node name="RowCounter" type="Label" parent="Control" unique_id=877946082]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 448.0
@@ -110,7 +126,7 @@ offset_bottom = 482.0
 text = "Rows: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="ColumnCounter" type="Label" parent="Control"]
+[node name="ColumnCounter" type="Label" parent="Control" unique_id=1414811356]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 528.0
@@ -119,7 +135,7 @@ offset_bottom = 562.0
 text = "Columns: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="MineCounter2" type="Label" parent="Control"]
+[node name="MineCounter2" type="Label" parent="Control" unique_id=1712923819]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 608.0
@@ -128,7 +144,7 @@ offset_bottom = 642.0
 text = "Mines: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="RowSlider" type="HSlider" parent="Control"]
+[node name="RowSlider" type="HSlider" parent="Control" unique_id=272982272]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 480.0
@@ -140,7 +156,7 @@ max_value = 24.0
 value = 4.0
 scrollable = false
 
-[node name="ColumnSlider" type="HSlider" parent="Control"]
+[node name="ColumnSlider" type="HSlider" parent="Control" unique_id=1919344364]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 560.0
@@ -152,7 +168,7 @@ max_value = 24.0
 value = 4.0
 scrollable = false
 
-[node name="MineSlider" type="HSlider" parent="Control"]
+[node name="MineSlider" type="HSlider" parent="Control" unique_id=2135989920]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 640.0
@@ -163,7 +179,7 @@ min_value = 5.0
 value = 5.0
 scrollable = false
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=484293029]
 
 [connection signal="pressed" from="Control/Easy" to="." method="_on_easy_pressed"]
 [connection signal="pressed" from="Control/Normal" to="." method="_on_normal_pressed"]
