@@ -38,7 +38,7 @@ light_energy = 2.023
 [node name="TileContainer" type="Node3D" parent="." unique_id=719134670]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=389577685]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.711525, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.663595, 0)
 mesh = SubResource("TorusMesh_uwrxv")
 surface_material_override/0 = SubResource("StandardMaterial3D_uwrxv")
 
@@ -50,10 +50,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 color = Color(0.242188, 0.242188, 0.242188, 0)
 
 [node name="Control" type="Control" parent="CanvasLayer" unique_id=999590835]
-visible = false
 z_index = 2
 layout_mode = 3
 anchors_preset = 15

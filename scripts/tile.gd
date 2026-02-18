@@ -20,7 +20,8 @@ var is_hidden: bool = true
 # used to check if the tile is flagged
 var is_flagged: bool = false
 
-@onready var mesh_instance: MeshInstance3D = $MeshInstance3D
+@onready var mesh_instance: CSGBox3D = $MainBox
+@onready var number_label: Label3D = $NumberLabel
 
 
 func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

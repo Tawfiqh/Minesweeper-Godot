@@ -1,21 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://lasbhi3kt474"]
+[gd_scene format=3 uid="uid://lasbhi3kt474"]
 
-[ext_resource type="Script" path="res://scripts/tile.gd" id="1_tile"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_tile"]
-size = Vector3(1.2, 1.2, 1.2)
+[ext_resource type="Script" uid="uid://cse3fhieg0q7i" path="res://scripts/tile.gd" id="1_tile"]
 
 [sub_resource type="BoxShape3D" id="BoxShape_tile"]
 size = Vector3(1.2, 1.2, 1.2)
 
-[node name="Tile" type="Area3D"]
-input_ray_pickable = true
+[sub_resource type="SystemFont" id="SystemFont_3dk36"]
+font_weight = 875
+
+[node name="Tile" type="Area3D" unique_id=101379275]
 script = ExtResource("1_tile")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_tile")
+[node name="MainBox" type="CSGBox3D" parent="." unique_id=585750021]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CSGBox3D" type="CSGBox3D" parent="MainBox" unique_id=568927764]
+transform = Transform3D(0.7071068, -0.7360982, 0, 0.70710677, 0.73609823, 0, 0, 0, 1.041, -1.0456915, 0.68556607, 0)
+operation = 2
+size = Vector3(0.98742676, 1.0634766, 1)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="MainBox" unique_id=997183994]
+transform = Transform3D(0.7071068, -0.7360982, 0, 0.70710677, 0.73609823, 0, 0, 0, 1.041, 0.9468006, 0.686, 0)
+operation = 2
+size = Vector3(0.98742676, 1.0634766, 1)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="MainBox" unique_id=215267963]
+transform = Transform3D(-3.090862e-08, 3.2175873e-08, 1.041, 0.70710677, 0.7360982, 0, -0.70710677, 0.7360982, -4.5503555e-08, 0.009316385, 0.686, -0.89806557)
+operation = 2
+size = Vector3(0.98742676, 1.0634766, 1)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="MainBox" unique_id=25189601]
+transform = Transform3D(-3.090862e-08, 3.2175873e-08, 1.041, 0.70710677, 0.7360982, 0, -0.70710677, 0.7360982, -4.5503555e-08, 0.009316385, 0.686, 1.0279434)
+operation = 2
+size = Vector3(0.98742676, 1.0634766, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2118705151]
 shape = SubResource("BoxShape_tile")
+
+[node name="NumberLabel" type="Label3D" parent="." unique_id=2059259538]
+transform = Transform3D(0.2, 0, 0, 0, -8.742278e-09, 0.2, 0, -0.2, -8.742278e-09, 0, 0.6007501, 0)
+visible = false
+pixel_size = 0.08
+text = "0"
+font = SubResource("SystemFont_3dk36")
+font_size = 50
+outline_size = 13
 
 [connection signal="input_event" from="." to="." method="_input_event"]

@@ -116,9 +116,11 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 		return mat
 	match tile.state:
 		GameModel.States.SAFE:
-			mat.albedo_color = Color(0.4, 0.65, 0.4)
+			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mat.albedo_color = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
+			
 		GameModel.States.MINE:
-			mat.albedo_color = Color(0.15, 0.15, 0.15)
+			mat.albedo_color = Color(0.75, 0.15, 0.15) # RED
 		GameModel.States.CAUTION:
 			var n: int = tile.mines_nearby
 			var t: float = (n - 1) / 7.0
@@ -129,6 +131,12 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 func apply_tile_visual(tile) -> void:
 	if tile.mesh_instance:
 		tile.mesh_instance.material_override = _material_for_tile(tile)
+	if tile.number_label:
+		if tile.state == GameModel.States.CAUTION and not tile.is_hidden:
+			tile.number_label.text = str(tile.mines_nearby)
+			tile.number_label.visible = true
+		else:
+			tile.number_label.visible = false
 
 
 func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
