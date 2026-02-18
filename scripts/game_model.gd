@@ -3,7 +3,7 @@ class_name GameModel
 extends RefCounted
 
 # Tile states (shared with Tile and controller)
-enum States { SAFE, CAUTION, MINE }
+enum States {SAFE, CAUTION, MINE}
 
 # Grid and dimensions
 var grid: Array[Tile] = []
@@ -33,7 +33,7 @@ func prepare_new_game() -> void:
 	mine_guesses = 0
 
 
-func set_grid(new_grid: Array) -> void:
+func set_grid(new_grid: Array[Tile]) -> void:
 	grid = new_grid
 
 

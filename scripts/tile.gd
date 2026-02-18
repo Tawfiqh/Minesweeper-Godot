@@ -1,4 +1,4 @@
-extends TextureButton
+extends Area3D
 class_name Tile
 
 # index of the object in the grid array
@@ -20,12 +20,18 @@ var is_hidden: bool = true
 # used to check if the tile is flagged
 var is_flagged: bool = false
 
-# emit the virtual position along with the mouse button that was pressed
-# ensure that the tile is hidden, otherwise it shouldn't be clickable
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and is_hidden:
-		match event.button_index:
-			MOUSE_BUTTON_LEFT:
-				SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_LEFT)
-			MOUSE_BUTTON_RIGHT:
-				SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_RIGHT)
+@onready var mesh_instance: MeshInstance3D = $MeshInstance3D
+
+
+func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mb: InputEventMouseButton = event
+	if not mb.pressed or not is_hidden:
+		return
+	print("[Tile] input_event virtual_pos=%s button_index=%s" % [virtual_pos, mb.button_index])
+	match mb.button_index:
+		MOUSE_BUTTON_LEFT:
+			SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_LEFT)
+		MOUSE_BUTTON_RIGHT:
+			SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_RIGHT)

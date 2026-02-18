@@ -2,15 +2,20 @@
 
 [ext_resource type="Script" uid="uid://ctg4hq0pqoufy" path="res://scripts/game_controller.gd" id="1_m35v1"]
 
+[sub_resource type="TorusMesh" id="TorusMesh_uwrxv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uwrxv"]
+
 [sub_resource type="LabelSettings" id="LabelSettings_xgd6b"]
 font_size = 24
 
 [sub_resource type="SystemFont" id="SystemFont_uwrxv"]
+subpixel_positioning = 0
 
 [sub_resource type="LabelSettings" id="LabelSettings_d4yan"]
 font = SubResource("SystemFont_uwrxv")
 font_size = 75
-outline_size = 8
+outline_size = 58
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
 shadow_offset = Vector2(3, 3)
@@ -18,18 +23,37 @@ shadow_offset = Vector2(3, 3)
 [sub_resource type="LabelSettings" id="LabelSettings_b1gra"]
 font_size = 18
 
-[node name="Game" type="Node" unique_id=1816172938]
+[node name="Game" type="Node3D" unique_id=1816172938]
 script = ExtResource("1_m35v1")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1460956653]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1583565480]
+transform = Transform3D(1, 0, 0, 0, 0.4539905, 0.89100647, 0, -0.89100647, 0.4539905, 0, 11.46, 6.366)
+fov = 82.0
+near = 0.039
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=290524074]
+transform = Transform3D(0.99026805, 0.05991557, -0.1256156, 0, 0.90258527, 0.43051112, 0.1391731, -0.42632142, 0.89380133, -6.194, 8.25, 9.6)
+light_energy = 2.023
+
+[node name="TileContainer" type="Node3D" parent="." unique_id=719134670]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=389577685]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.711525, 0)
+mesh = SubResource("TorusMesh_uwrxv")
+surface_material_override/0 = SubResource("StandardMaterial3D_uwrxv")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1022318952]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1460956653]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.242188, 0.242188, 0.242188, 1)
+color = Color(0.242188, 0.242188, 0.242188, 0)
 
-[node name="Control" type="Control" parent="." unique_id=999590835]
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=999590835]
+visible = false
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
@@ -37,8 +61,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="Easy" type="Button" parent="Control" unique_id=755118882]
+[node name="Easy" type="Button" parent="CanvasLayer/Control" unique_id=755118882]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 544.0
@@ -48,7 +73,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Easy"
 
-[node name="Normal" type="Button" parent="Control" unique_id=945313388]
+[node name="Normal" type="Button" parent="CanvasLayer/Control" unique_id=945313388]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 624.0
@@ -58,7 +83,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Normal"
 
-[node name="Hard" type="Button" parent="Control" unique_id=276590313]
+[node name="Hard" type="Button" parent="CanvasLayer/Control" unique_id=276590313]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 704.0
@@ -68,7 +93,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Hard"
 
-[node name="CustomGame" type="Button" parent="Control" unique_id=709477558]
+[node name="CustomGame" type="Button" parent="CanvasLayer/Control" unique_id=709477558]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 704.0
@@ -78,7 +103,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Custom game"
 
-[node name="MineCounter" type="Label" parent="Control" unique_id=2078309711]
+[node name="MineCounter" type="Label" parent="CanvasLayer/Control" unique_id=2078309711]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 48.0
@@ -87,7 +112,7 @@ offset_bottom = 82.0
 text = "MINES: 999999"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="TimeElapsed" type="Label" parent="Control" unique_id=454706794]
+[node name="TimeElapsed" type="Label" parent="CanvasLayer/Control" unique_id=454706794]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 96.0
@@ -96,7 +121,7 @@ offset_bottom = 130.0
 text = "TIME: 999:99"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="Message" type="Label" parent="Control" unique_id=464018184]
+[node name="Message" type="Label" parent="CanvasLayer/Control" unique_id=464018184]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -114,7 +139,7 @@ label_settings = SubResource("LabelSettings_d4yan")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RowCounter" type="Label" parent="Control" unique_id=877946082]
+[node name="RowCounter" type="Label" parent="CanvasLayer/Control" unique_id=877946082]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 448.0
@@ -123,7 +148,7 @@ offset_bottom = 482.0
 text = "Rows: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="ColumnCounter" type="Label" parent="Control" unique_id=1414811356]
+[node name="ColumnCounter" type="Label" parent="CanvasLayer/Control" unique_id=1414811356]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 528.0
@@ -132,7 +157,7 @@ offset_bottom = 562.0
 text = "Columns: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="MineCounter2" type="Label" parent="Control" unique_id=1712923819]
+[node name="MineCounter2" type="Label" parent="CanvasLayer/Control" unique_id=1712923819]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 608.0
@@ -141,7 +166,7 @@ offset_bottom = 642.0
 text = "Mines: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="RowSlider" type="HSlider" parent="Control" unique_id=272982272]
+[node name="RowSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=272982272]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 480.0
@@ -153,7 +178,7 @@ max_value = 24.0
 value = 4.0
 scrollable = false
 
-[node name="ColumnSlider" type="HSlider" parent="Control" unique_id=1919344364]
+[node name="ColumnSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=1919344364]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 560.0
@@ -165,7 +190,7 @@ max_value = 24.0
 value = 4.0
 scrollable = false
 
-[node name="MineSlider" type="HSlider" parent="Control" unique_id=2135989920]
+[node name="MineSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=2135989920]
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 640.0
@@ -178,11 +203,11 @@ scrollable = false
 
 [node name="Timer" type="Timer" parent="." unique_id=484293029]
 
-[connection signal="pressed" from="Control/Easy" to="." method="_on_easy_pressed"]
-[connection signal="pressed" from="Control/Normal" to="." method="_on_normal_pressed"]
-[connection signal="pressed" from="Control/Hard" to="." method="_on_hard_pressed"]
-[connection signal="pressed" from="Control/CustomGame" to="." method="_on_custom_game_pressed"]
-[connection signal="value_changed" from="Control/RowSlider" to="." method="_on_row_slider_value_changed"]
-[connection signal="value_changed" from="Control/ColumnSlider" to="." method="_on_column_slider_value_changed"]
-[connection signal="value_changed" from="Control/MineSlider" to="." method="_on_mine_slider_value_changed"]
+[connection signal="pressed" from="CanvasLayer/Control/Easy" to="." method="_on_easy_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/Normal" to="." method="_on_normal_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/Hard" to="." method="_on_hard_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/CustomGame" to="." method="_on_custom_game_pressed"]
+[connection signal="value_changed" from="CanvasLayer/Control/RowSlider" to="." method="_on_row_slider_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/Control/ColumnSlider" to="." method="_on_column_slider_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/Control/MineSlider" to="." method="_on_mine_slider_value_changed"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
