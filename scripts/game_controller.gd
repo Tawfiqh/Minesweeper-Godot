@@ -28,7 +28,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 @onready var mine_slider: HSlider = $CanvasLayer/Control/MineSlider
 
 const TILE = preload("res://scenes/tile.tscn")
-const GRID_SPACING: float = 1.5
+const GRID_SPACING: float = 1
 
 var model: GameModel
 
