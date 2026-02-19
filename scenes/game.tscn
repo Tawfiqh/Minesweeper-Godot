@@ -6,16 +6,26 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uwrxv"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_uwrxv"]
+font_size = 41
+outline_size = 22
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(3, 3)
+
 [sub_resource type="LabelSettings" id="LabelSettings_xgd6b"]
 font_size = 24
 
-[sub_resource type="SystemFont" id="SystemFont_uwrxv"]
-subpixel_positioning = 0
-
 [sub_resource type="LabelSettings" id="LabelSettings_d4yan"]
-font = SubResource("SystemFont_uwrxv")
 font_size = 75
 outline_size = 58
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="LabelSettings" id="LabelSettings_yqjtg"]
+font_size = 28
+outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
 shadow_offset = Vector2(3, 3)
@@ -63,6 +73,20 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Difficulty" type="Label" parent="CanvasLayer/Control" unique_id=402567706]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 48.0
+offset_top = 18.0
+offset_right = 640.5
+offset_bottom = 188.5
+grow_vertical = 2
+text = "Difficulty:"
+label_settings = SubResource("LabelSettings_uwrxv")
+vertical_alignment = 1
+
 [node name="Easy" type="Button" parent="CanvasLayer/Control" unique_id=755118882]
 layout_mode = 0
 offset_left = 48.0
@@ -94,6 +118,7 @@ theme_override_font_sizes/font_size = 18
 text = "Hard"
 
 [node name="CustomGame" type="Button" parent="CanvasLayer/Control" unique_id=709477558]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 704.0
@@ -139,7 +164,26 @@ label_settings = SubResource("LabelSettings_d4yan")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="SubMessage" type="Label" parent="CanvasLayer/Control/Message" unique_id=506525440]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -296.25
+offset_top = 59.0
+offset_right = 296.25
+offset_bottom = 123.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Select a difficulty to play again!"
+label_settings = SubResource("LabelSettings_yqjtg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="RowCounter" type="Label" parent="CanvasLayer/Control" unique_id=877946082]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 448.0
@@ -149,6 +193,7 @@ text = "Rows: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
 [node name="ColumnCounter" type="Label" parent="CanvasLayer/Control" unique_id=1414811356]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 528.0
@@ -158,6 +203,7 @@ text = "Columns: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
 [node name="MineCounter2" type="Label" parent="CanvasLayer/Control" unique_id=1712923819]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 608.0
@@ -167,6 +213,7 @@ text = "Mines: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
 [node name="RowSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=272982272]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 480.0
@@ -179,6 +226,7 @@ value = 4.0
 scrollable = false
 
 [node name="ColumnSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=1919344364]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 560.0
@@ -191,6 +239,7 @@ value = 4.0
 scrollable = false
 
 [node name="MineSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=2135989920]
+visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 640.0
