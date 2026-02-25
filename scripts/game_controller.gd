@@ -21,10 +21,8 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 @onready var message: Label = $CanvasLayer/Control/Message
 @onready var timer: Timer = $Timer
 @onready var row_counter: Label = $CanvasLayer/Control/RowCounter
-@onready var column_counter: Label = $CanvasLayer/Control/ColumnCounter
 @onready var mine_counter_2: Label = $CanvasLayer/Control/MineCounter2
 @onready var row_slider: HSlider = $CanvasLayer/Control/RowSlider
-@onready var column_slider: HSlider = $CanvasLayer/Control/ColumnSlider
 @onready var mine_slider: HSlider = $CanvasLayer/Control/MineSlider
 
 const TILE = preload("res://scenes/tile.tscn")
@@ -38,10 +36,8 @@ func _ready() -> void:
 	SignalBus.tile_pressed.connect(_on_tile_pressed)
 
 	row_slider.value = 11
-	column_slider.value = 12
 	mine_slider.value = 20
 	_update_row_custom_counter(row_slider.value)
-	_update_column_custom_counter(column_slider.value)
 	_update_mine_custom_counter(mine_slider.value)
 
 	_on_easy_pressed()
@@ -109,10 +105,6 @@ func _update_mine_guess_counter() -> void:
 
 func _update_row_custom_counter(value: float) -> void:
 	row_counter.text = "Rows: %s" % int(value)
-
-
-func _update_column_custom_counter(value: float) -> void:
-	column_counter.text = "Columns: %s" % int(value)
 
 
 func _update_mine_custom_counter(value: float) -> void:
@@ -239,15 +231,11 @@ func _on_hard_pressed() -> void:
 
 
 func _on_custom_game_pressed() -> void:
-	generate_tiles(int(row_slider.value), int(column_slider.value), int(mine_slider.value))
+	generate_tiles(int(row_slider.value), int(row_slider.value), int(mine_slider.value))
 
 
 func _on_row_slider_value_changed(value: float) -> void:
 	_update_row_custom_counter(value)
-
-
-func _on_column_slider_value_changed(value: float) -> void:
-	_update_column_custom_counter(value)
 
 
 func _on_mine_slider_value_changed(value: float) -> void:
