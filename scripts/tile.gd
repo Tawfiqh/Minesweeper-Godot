@@ -2,7 +2,7 @@ extends Area3D
 class_name Tile
 
 # index of the object in the grid array
-var virtual_pos: int = 0
+var grid_index: int = 0
 
 # row and oclumn of this tile on the grid
 var row: int = 0
@@ -37,9 +37,9 @@ func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _n
 	if now - _last_click_time < DEBOUNCE_MS:
 		return
 	_last_click_time = now
-	print("🔪🔪[Tile] input_event virtual_pos=%s button_index=%s" % [virtual_pos, mb.button_index])
+	print("🔪🔪[Tile] input_event grid_index=%s button_index=%s" % [grid_index, mb.button_index])
 	match mb.button_index:
 		MOUSE_BUTTON_LEFT:
-			SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_LEFT)
+			SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_LEFT)
 		MOUSE_BUTTON_RIGHT:
-			SignalBus.tile_pressed.emit(virtual_pos, MOUSE_BUTTON_RIGHT)
+			SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_RIGHT)

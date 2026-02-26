@@ -34,6 +34,14 @@ func prepare_new_game() -> void:
 func set_grid(new_grid: Array[Tile]) -> void:
 	grid = new_grid
 
+func index_of_position(x: int, y: int) -> int:
+	return x + (y * grid_dimensions)
+
+func tile_at_position(x: int, y: int) -> Tile:
+	var newIndex: int = index_of_position(x, y)
+	if newIndex < 0 or newIndex >= grid.size():
+		return null
+	return grid[newIndex]
 
 func assign_tiles(first_tile: Tile) -> void:
 	var rows := grid_dimensions
@@ -50,7 +58,7 @@ func assign_tiles(first_tile: Tile) -> void:
 	for t in nearby_before:
 		grid_copy.erase(t)
 
-	var mine_count: int = clamp(mines, 0, (rows * columns) - 9)
+	var mine_count: int = clamp(mines, 0, (grid_dimensions * grid_dimensions) - 9)
 	mine_guesses += mine_count
 	total_mines = mine_count
 
@@ -58,9 +66,9 @@ func assign_tiles(first_tile: Tile) -> void:
 		var tile: Tile = grid_copy.pop_back()
 		tile.state = States.MINE
 
-	for y in range(rows):
-		for x in range(columns):
-			var tile: Tile = grid[x + (y * columns)]
+	for y in range(grid_dimensions):
+		for x in range(grid_dimensions):
+			var tile: Tile = tile_at_position(x, y)
 			if tile.state == States.MINE:
 				continue
 			var nearby_after: Array[Tile] = get_nearby_tiles(tile)

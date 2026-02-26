@@ -43,11 +43,11 @@ func _ready() -> void:
 	_on_easy_pressed()
 
 
-func add_tile(pos: Vector3, virtual_pos: int, row: int, column: int):
+func add_tile(pos: Vector3, grid_index: int, row: int, column: int):
 	var tile_instance: Tile = TILE.instantiate()
 	tile_container.add_child(tile_instance)
 	tile_instance.position = pos
-	tile_instance.virtual_pos = virtual_pos
+	tile_instance.grid_index = grid_index
 	tile_instance.row = row
 	tile_instance.column = column
 	tile_instance.state = GameModel.States.SAFE
@@ -67,8 +67,8 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	for y in range(gridDimensions): # rows
 		for x in range(gridDimensions): # columns
 			var tile_pos: Vector3 = Vector3(x * GRID_SPACING - half_w, 0.0, y * GRID_SPACING - half_h)
-			var virtual_pos: int = x + (y * gridDimensions)
-			var tile: Tile = add_tile(tile_pos, virtual_pos, y, x)
+			var grid_index: int = model.index_of_position(x, y)
+			var tile: Tile = add_tile(tile_pos, grid_index, y, x)
 			new_grid.append(tile)
 
 	model.set_grid(new_grid)
@@ -151,16 +151,16 @@ func apply_tile_visual(tile) -> void:
 			tile.number_label.visible = false
 
 
-func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
-	print("[GameController] tile_pressed virtual_pos=%s mouse_button=%s" % [virtual_pos, mouse_button])
-	var tile = model.grid[virtual_pos]
+func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:
+	print("[GameController] tile_pressed grid_index=%s mouse_button=%s" % [grid_index, mouse_button])
+	var tile = model.grid[grid_index]
 
 	if not model.can_click:
 		return
 
 	# Right mouse button toggles the flag on the tile (i.e the player thinks this is a mine)
 	if mouse_button == MOUSE_BUTTON_RIGHT:
-		# print("\n [GameController] tile_pressed right virtual_pos=%s" % virtual_pos)
+		# print("\n [GameController] tile_pressed right grid_index=%s" % grid_index)
 		# print("tile.is_flagged=%s" % tile.is_flagged)
 		if not tile.is_flagged:
 			tile.is_flagged = true
