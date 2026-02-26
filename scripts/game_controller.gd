@@ -27,7 +27,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
-const THREE_D_ENABLED: bool = false
+const THREE_D_ENABLED: bool = true
 
 var model: GameModel
 
