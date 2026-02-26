@@ -80,42 +80,29 @@ func assign_tiles(first_tile: Tile) -> void:
 
 
 func get_nearby_tiles(tile: Tile) -> Array[Tile]:
-	var row: int = tile.x
-	var column: int = tile.y
+	var tileX: int = tile.x
+	var tileY: int = tile.y
+	var tileZ: int = tile.z
 	var nearby_tiles: Array[Tile] = []
 
-	var top_left: int = (column - 1) + ((row - 1) * grid_dimensions)
-	var top: int = column + ((row - 1) * grid_dimensions)
-	var top_right: int = (column + 1) + ((row - 1) * grid_dimensions)
-	var left: int = (column - 1) + (row * grid_dimensions)
-	var right: int = (column + 1) + (row * grid_dimensions)
-	var bottom_left: int = (column - 1) + ((row + 1) * grid_dimensions)
-	var bottom: int = column + ((row + 1) * grid_dimensions)
-	var bottom_right: int = (column + 1) + ((row + 1) * grid_dimensions)
 
-	var left_bound: int = row * grid_dimensions
-	var right_bound: int = (row * grid_dimensions) + grid_dimensions - 1
-	var top_left_bound: int = (row - 1) * grid_dimensions
-	var top_right_bound: int = ((row - 1) * grid_dimensions) + grid_dimensions - 1
-	var bottom_left_bound: int = (row + 1) * grid_dimensions
-	var bottom_right_bound: int = ((row + 1) * grid_dimensions) + grid_dimensions - 1
+	for z in range(-1, 2):
+		if zdepth == 1 && z != 0: # if it's 2d then skip z apart from when 0
+			continue
+		for y in range(-1, 2): # -1 => 0 => 1
+			for x in range(-1, 2): # -1 => 0 => 1
+				print(">>> OFFSETS x:%s, y:%s, z:%s" % [x, y, z])
+				if x == 0 && y == 0: # don't count self as neighbour!
+					continue
+				var neighbourX: int = tileX + x
+				var neighbourY: int = tileY + y
+				var neighbourZ: int = tileZ + z
+				if neighbourX < 0 or neighbourX >= grid_dimensions or neighbourY < 0 or neighbourY >= grid_dimensions or neighbourZ < 0 or neighbourZ >= zdepth:
+					continue
+				nearby_tiles.append(grid[neighbourX + neighbourY * grid_dimensions + neighbourZ * grid_dimensions * grid_dimensions])
 
-	if top_left >= 0 and top_left >= top_left_bound:
-		nearby_tiles.append(grid[top_left])
-	if top >= 0:
-		nearby_tiles.append(grid[top])
-	if top_right >= 0 and top_right <= top_right_bound:
-		nearby_tiles.append(grid[top_right])
-	if left >= 0 and left >= left_bound:
-		nearby_tiles.append(grid[left])
-	if right < (grid_dimensions * grid_dimensions) and right <= right_bound:
-		nearby_tiles.append(grid[right])
-	if bottom_left < (grid_dimensions * grid_dimensions) and bottom_left >= bottom_left_bound:
-		nearby_tiles.append(grid[bottom_left])
-	if bottom < (grid_dimensions * grid_dimensions):
-		nearby_tiles.append(grid[bottom])
-	if bottom_right < (grid_dimensions * grid_dimensions) and bottom_right <= bottom_right_bound:
-		nearby_tiles.append(grid[bottom_right])
+	print("\n\n")
+
 
 	return nearby_tiles
 
