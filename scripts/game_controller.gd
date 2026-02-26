@@ -27,6 +27,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
+const THREE_D_ENABLED: bool = false
 
 var model: GameModel
 
@@ -43,13 +44,16 @@ func _ready() -> void:
 	_on_easy_pressed()
 
 
-func add_tile(pos: Vector3, grid_index: int, row: int, column: int):
+func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
 	var tile_instance: Tile = TILE.instantiate()
 	tile_container.add_child(tile_instance)
 	tile_instance.position = pos
+	
 	tile_instance.grid_index = grid_index
-	tile_instance.row = row
-	tile_instance.column = column
+	tile_instance.z = z
+	tile_instance.y = y
+	tile_instance.x = x
+
 	tile_instance.state = GameModel.States.SAFE
 	tile_instance.is_hidden = true # TBC - this seems weird -
 	return tile_instance
@@ -58,18 +62,30 @@ func add_tile(pos: Vector3, grid_index: int, row: int, column: int):
 func generate_tiles(gridDimensions: int, mines: int) -> void:
 	_reset_game()
 
-	model.configure(gridDimensions, mines)
-	var half_w: float = (gridDimensions - 1) * GRID_SPACING / 2.0
-	var half_h: float = (gridDimensions - 1) * GRID_SPACING / 2.0
-
+	model.configure(gridDimensions, mines, THREE_D_ENABLED)
+	
+	var x_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-width from the center of the grid
+	var y_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
+	
+	var z_offset: float = 0
+	if model.zdepth > 1:
+		z_offset = (model.zdepth - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
+	print("🔪🔪[GameController] z_offset=%s" % z_offset)
+	
 	# XXY - This touches the grid directly, we need to refactor this to use the grid array
 	var new_grid: Array[Tile] = []
-	for y in range(gridDimensions): # rows
-		for x in range(gridDimensions): # columns
-			var tile_pos: Vector3 = Vector3(x * GRID_SPACING - half_w, 0.0, y * GRID_SPACING - half_h)
-			var grid_index: int = model.index_of_position(x, y)
-			var tile: Tile = add_tile(tile_pos, grid_index, y, x)
-			new_grid.append(tile)
+	for z in range(model.zdepth): # columns
+		for y in range(gridDimensions): # rows
+			for x in range(gridDimensions): # columns
+				print("🔪🔪[GameController] x=%s y=%s z=%s z_offset=%s" % [x, y, z, z_offset])
+				var tile_pos: Vector3 = Vector3(
+					x * GRID_SPACING - x_offset,
+					 z * GRID_SPACING - z_offset,
+					 y * GRID_SPACING - y_offset
+					  ) # position of the tile
+				var grid_index: int = model.index_of_position(x, y, z)
+				var tile: Tile = add_tile(tile_pos, grid_index, z, y, x)
+				new_grid.append(tile)
 
 	model.set_grid(new_grid)
 	model.prepare_new_game()

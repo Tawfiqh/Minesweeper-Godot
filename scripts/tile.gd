@@ -4,9 +4,10 @@ class_name Tile
 # index of the object in the grid array
 var grid_index: int = 0
 
-# row and oclumn of this tile on the grid
-var row: int = 0
-var column: int = 0
+# row, column and shelf of this tile on the grid
+var x: int = 0
+var y: int = 0
+var z: int = 0
 
 # state of the tile (GameModel.States)
 var state: int = GameModel.States.SAFE

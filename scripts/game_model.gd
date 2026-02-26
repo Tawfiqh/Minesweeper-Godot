@@ -9,6 +9,7 @@ enum States {SAFE, CAUTION, MINE}
 var grid: Array[Tile] = []
 var grid_dimensions: int = 8
 var total_mines: int = 20
+var zdepth: int = 1
 
 # Game state
 var is_first_click: bool = true
@@ -18,9 +19,10 @@ var seconds: int = 0
 var mine_guesses: int = 0
 
 
-func configure(row_size: int, mines: int) -> void:
+func configure(row_size: int, mines: int, three_d_enabled: bool) -> void:
 	grid_dimensions = row_size
 	total_mines = mines
+	zdepth = grid_dimensions if three_d_enabled else 1
 
 
 func prepare_new_game() -> void:
@@ -34,18 +36,16 @@ func prepare_new_game() -> void:
 func set_grid(new_grid: Array[Tile]) -> void:
 	grid = new_grid
 
-func index_of_position(x: int, y: int) -> int:
-	return x + (y * grid_dimensions)
+func index_of_position(x: int, y: int, z: int) -> int:
+	return x + (y * grid_dimensions) + (z * grid_dimensions * grid_dimensions) # TBC if this works
 
-func tile_at_position(x: int, y: int) -> Tile:
-	var newIndex: int = index_of_position(x, y)
+func tile_at_position(x: int, y: int, z: int) -> Tile:
+	var newIndex: int = index_of_position(x, y, z)
 	if newIndex < 0 or newIndex >= grid.size():
 		return null
 	return grid[newIndex]
 
 func assign_tiles(first_tile: Tile) -> void:
-	var rows := grid_dimensions
-	var columns := grid_dimensions
 	var mines := total_mines
 
 	var grid_copy = grid.duplicate(true)
@@ -66,21 +66,22 @@ func assign_tiles(first_tile: Tile) -> void:
 		var tile: Tile = grid_copy.pop_back()
 		tile.state = States.MINE
 
-	for y in range(grid_dimensions):
-		for x in range(grid_dimensions):
-			var tile: Tile = tile_at_position(x, y)
-			if tile.state == States.MINE:
-				continue
-			var nearby_after: Array[Tile] = get_nearby_tiles(tile)
-			for nearby_tile in nearby_after:
-				if nearby_tile.state == States.MINE:
-					tile.state = States.CAUTION
-					tile.mines_nearby += 1
+	for z in range(zdepth):
+		for y in range(grid_dimensions):
+			for x in range(grid_dimensions):
+				var tile: Tile = tile_at_position(x, y, z)
+				if tile.state == States.MINE:
+					continue
+				var nearby_after: Array[Tile] = get_nearby_tiles(tile)
+				for nearby_tile in nearby_after:
+					if nearby_tile.state == States.MINE:
+						tile.state = States.CAUTION
+						tile.mines_nearby += 1
 
 
 func get_nearby_tiles(tile: Tile) -> Array[Tile]:
-	var row: int = tile.row
-	var column: int = tile.column
+	var row: int = tile.x
+	var column: int = tile.y
 	var nearby_tiles: Array[Tile] = []
 
 	var top_left: int = (column - 1) + ((row - 1) * grid_dimensions)
