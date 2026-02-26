@@ -7,8 +7,7 @@ enum States {SAFE, CAUTION, MINE}
 
 # Grid and dimensions
 var grid: Array[Tile] = []
-var total_rows: int = 12
-var total_columns: int = 8
+var grid_dimensions: int = 8
 var total_mines: int = 20
 
 # Game state
@@ -19,9 +18,8 @@ var seconds: int = 0
 var mine_guesses: int = 0
 
 
-func configure(rows: int, columns: int, mines: int) -> void:
-	total_rows = rows
-	total_columns = columns
+func configure(row_size: int, mines: int) -> void:
+	grid_dimensions = row_size
 	total_mines = mines
 
 
@@ -38,8 +36,8 @@ func set_grid(new_grid: Array[Tile]) -> void:
 
 
 func assign_tiles(first_tile: Tile) -> void:
-	var rows := total_rows
-	var columns := total_columns
+	var rows := grid_dimensions
+	var columns := grid_dimensions
 	var mines := total_mines
 
 	var grid_copy = grid.duplicate(true)
@@ -77,21 +75,21 @@ func get_nearby_tiles(tile: Tile) -> Array[Tile]:
 	var column: int = tile.column
 	var nearby_tiles: Array[Tile] = []
 
-	var top_left: int = (column - 1) + ((row - 1) * total_columns)
-	var top: int = column + ((row - 1) * total_columns)
-	var top_right: int = (column + 1) + ((row - 1) * total_columns)
-	var left: int = (column - 1) + (row * total_columns)
-	var right: int = (column + 1) + (row * total_columns)
-	var bottom_left: int = (column - 1) + ((row + 1) * total_columns)
-	var bottom: int = column + ((row + 1) * total_columns)
-	var bottom_right: int = (column + 1) + ((row + 1) * total_columns)
+	var top_left: int = (column - 1) + ((row - 1) * grid_dimensions)
+	var top: int = column + ((row - 1) * grid_dimensions)
+	var top_right: int = (column + 1) + ((row - 1) * grid_dimensions)
+	var left: int = (column - 1) + (row * grid_dimensions)
+	var right: int = (column + 1) + (row * grid_dimensions)
+	var bottom_left: int = (column - 1) + ((row + 1) * grid_dimensions)
+	var bottom: int = column + ((row + 1) * grid_dimensions)
+	var bottom_right: int = (column + 1) + ((row + 1) * grid_dimensions)
 
-	var left_bound: int = row * total_columns
-	var right_bound: int = (row * total_columns) + total_columns - 1
-	var top_left_bound: int = (row - 1) * total_columns
-	var top_right_bound: int = ((row - 1) * total_columns) + total_columns - 1
-	var bottom_left_bound: int = (row + 1) * total_columns
-	var bottom_right_bound: int = ((row + 1) * total_columns) + total_columns - 1
+	var left_bound: int = row * grid_dimensions
+	var right_bound: int = (row * grid_dimensions) + grid_dimensions - 1
+	var top_left_bound: int = (row - 1) * grid_dimensions
+	var top_right_bound: int = ((row - 1) * grid_dimensions) + grid_dimensions - 1
+	var bottom_left_bound: int = (row + 1) * grid_dimensions
+	var bottom_right_bound: int = ((row + 1) * grid_dimensions) + grid_dimensions - 1
 
 	if top_left >= 0 and top_left >= top_left_bound:
 		nearby_tiles.append(grid[top_left])
@@ -101,13 +99,13 @@ func get_nearby_tiles(tile: Tile) -> Array[Tile]:
 		nearby_tiles.append(grid[top_right])
 	if left >= 0 and left >= left_bound:
 		nearby_tiles.append(grid[left])
-	if right < (total_rows * total_columns) and right <= right_bound:
+	if right < (grid_dimensions * grid_dimensions) and right <= right_bound:
 		nearby_tiles.append(grid[right])
-	if bottom_left < (total_rows * total_columns) and bottom_left >= bottom_left_bound:
+	if bottom_left < (grid_dimensions * grid_dimensions) and bottom_left >= bottom_left_bound:
 		nearby_tiles.append(grid[bottom_left])
-	if bottom < (total_rows * total_columns):
+	if bottom < (grid_dimensions * grid_dimensions):
 		nearby_tiles.append(grid[bottom])
-	if bottom_right < (total_rows * total_columns) and bottom_right <= bottom_right_bound:
+	if bottom_right < (grid_dimensions * grid_dimensions) and bottom_right <= bottom_right_bound:
 		nearby_tiles.append(grid[bottom_right])
 
 	return nearby_tiles
@@ -141,6 +139,13 @@ func _reveal_nearby_recursive(tile: Tile) -> int:
 	return flagged_revealed
 
 
+# func iterate_tiles(callback: Callable) -> void:
+# 	for row in grid:
+# 		for column in row:
+# 			for shelf in column:
+# 				for tile in shelf:
+# 					callback.call(tile)
+
 func reveal_mines() -> void:
 	for tile in grid:
 		if tile.state == States.MINE:
@@ -153,3 +158,9 @@ func check_win() -> bool:
 		if tile.is_hidden:
 			remaining += 1
 	return remaining == total_mines
+
+
+func free_tiles() -> void:
+	for tile in grid:
+		tile.queue_free()
+	grid.clear()

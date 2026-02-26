@@ -26,7 +26,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 @onready var mine_slider: HSlider = $CanvasLayer/Control/MineSlider
 
 const TILE = preload("res://scenes/tile.tscn")
-const GRID_SPACING: float = 1
+const GRID_SPACING: float = 1.5
 
 var model: GameModel
 
@@ -55,18 +55,19 @@ func add_tile(pos: Vector3, virtual_pos: int, row: int, column: int):
 	return tile_instance
 
 
-func generate_tiles(rows: int, columns: int, mines: int) -> void:
+func generate_tiles(gridDimensions: int, mines: int) -> void:
 	_reset_game()
 
-	model.configure(rows, columns, mines)
-	var half_w: float = (columns - 1) * GRID_SPACING / 2.0
-	var half_h: float = (rows - 1) * GRID_SPACING / 2.0
+	model.configure(gridDimensions, mines)
+	var half_w: float = (gridDimensions - 1) * GRID_SPACING / 2.0
+	var half_h: float = (gridDimensions - 1) * GRID_SPACING / 2.0
 
+	# XXY - This touches the grid directly, we need to refactor this to use the grid array
 	var new_grid: Array[Tile] = []
-	for y in range(rows):
-		for x in range(columns):
+	for y in range(gridDimensions): # rows
+		for x in range(gridDimensions): # columns
 			var tile_pos: Vector3 = Vector3(x * GRID_SPACING - half_w, 0.0, y * GRID_SPACING - half_h)
-			var virtual_pos: int = x + (y * columns)
+			var virtual_pos: int = x + (y * gridDimensions)
 			var tile: Tile = add_tile(tile_pos, virtual_pos, y, x)
 			new_grid.append(tile)
 
@@ -86,10 +87,7 @@ func _reset_game() -> void:
 	_update_time()
 	timer.start()
 
-	if model.grid.size() > 0:
-		for tile in model.grid:
-			tile.queue_free()
-		model.grid.clear()
+	model.free_tiles()
 
 
 func _update_time() -> void:
@@ -160,6 +158,7 @@ func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
 	if not model.can_click:
 		return
 
+	# Right mouse button toggles the flag on the tile (i.e the player thinks this is a mine)
 	if mouse_button == MOUSE_BUTTON_RIGHT:
 		# print("\n [GameController] tile_pressed right virtual_pos=%s" % virtual_pos)
 		# print("tile.is_flagged=%s" % tile.is_flagged)
@@ -173,16 +172,22 @@ func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
 		_update_mine_guess_counter()
 		return
 
+	# If not a mouse button - ignore about it
 	if mouse_button != MOUSE_BUTTON_LEFT or tile.is_flagged:
 		return
 
+	# If it's the first click, assign the tiles to the grid
+	# they're all blank tiles before the first click 
+	# to prevent the user from clicking a mine on the first click
 	if model.is_first_click:
 		model.assign_tiles(tile)
 		model.is_first_click = false
 
+	# Reveal the tile (i.e the player digs the tile)
 	var was_mine: bool = model.reveal_tile(tile)
 	apply_tile_visual(tile)
 
+	# If the tile is a mine, reveal all the mines = Game Over
 	if was_mine:
 		model.reveal_mines()
 		for t in model.grid:
@@ -193,12 +198,15 @@ func _on_tile_pressed(virtual_pos: int, mouse_button: int) -> void:
 		model.can_click = false
 		return
 
+	# If it was not a mine - reveal how many mines are nearby
 	var flagged_revealed: int = model.reveal_nearby_tiles(tile)
 	model.mine_guesses += flagged_revealed
 	for t in model.grid:
 		apply_tile_visual(t)
 	_update_mine_guess_counter()
 
+
+	# If the player has won, reveal all the tiles and set the message to "You Won!"
 	if model.check_win():
 		for t in model.grid:
 			if t.is_hidden:
@@ -219,19 +227,19 @@ func _on_timer_timeout() -> void:
 
 
 func _on_easy_pressed() -> void:
-	generate_tiles(10, 10, 12)
+	generate_tiles(10, 12)
 
 
 func _on_normal_pressed() -> void:
-	generate_tiles(16, 12, 25)
+	generate_tiles(14, 25)
 
 
 func _on_hard_pressed() -> void:
-	generate_tiles(18, 16, 40)
+	generate_tiles(18, 40)
 
 
 func _on_custom_game_pressed() -> void:
-	generate_tiles(int(row_slider.value), int(row_slider.value), int(mine_slider.value))
+	generate_tiles(int(row_slider.value), int(mine_slider.value))
 
 
 func _on_row_slider_value_changed(value: float) -> void:

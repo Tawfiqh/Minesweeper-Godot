@@ -118,7 +118,6 @@ theme_override_font_sizes/font_size = 18
 text = "Hard"
 
 [node name="CustomGame" type="Button" parent="CanvasLayer/Control" unique_id=709477558]
-visible = false
 layout_mode = 0
 offset_left = 1072.0
 offset_top = 704.0
