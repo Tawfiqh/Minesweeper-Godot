@@ -118,21 +118,39 @@ func reveal_tile(tile: Tile) -> bool:
 func reveal_nearby_tiles(tile: Tile) -> int:
 	if tile.state == States.CAUTION or tile.state == States.MINE:
 		return 0
-	return _reveal_nearby_recursive(tile)
-	
+	# return _reveal_nearby_recursive(tile)
+	return _reveal_nearby_non_recursive(tile)
 
-func _reveal_nearby_recursive(tile: Tile) -> int:
+func _reveal_nearby_non_recursive(tile: Tile) -> int:
 	var flagged_revealed: int = 0
 	var nearby_tiles: Array[Tile] = get_nearby_tiles(tile)
-	for nearby_tile in nearby_tiles:
-		if nearby_tile.is_hidden:
-			if nearby_tile.is_flagged:
+	var queue: Array[Tile] = nearby_tiles
+	while queue.size() > 0:
+		var current_tile: Tile = queue.pop_back()
+		if current_tile.is_hidden:
+			if current_tile.is_flagged:
 				flagged_revealed += 1
-			nearby_tile.is_hidden = false
-			# Only recurse into SAFE tiles; stop at CAUTION (number) or MINE
-			if nearby_tile.state == States.SAFE:
-				flagged_revealed += _reveal_nearby_recursive(nearby_tile)
+			current_tile.is_hidden = false
+			if current_tile.state == States.SAFE:
+				var next_nearby_tiles: Array[Tile] = get_nearby_tiles(current_tile)
+				queue.append_array(next_nearby_tiles)
+
+	
 	return flagged_revealed
+
+
+# func _reveal_nearby_recursive(tile: Tile) -> int:
+# 	var flagged_revealed: int = 0
+# 	var nearby_tiles: Array[Tile] = get_nearby_tiles(tile)
+# 	for nearby_tile in nearby_tiles:
+# 		if nearby_tile.is_hidden:
+# 			if nearby_tile.is_flagged:
+# 				flagged_revealed += 1
+# 			nearby_tile.is_hidden = false
+# 			# Only recurse into SAFE tiles; stop at CAUTION (number) or MINE
+# 			if nearby_tile.state == States.SAFE:
+# 				flagged_revealed += _reveal_nearby_recursive(nearby_tile)
+# 	return flagged_revealed
 
 
 # func iterate_tiles(callback: Callable) -> void:

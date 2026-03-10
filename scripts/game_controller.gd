@@ -336,8 +336,8 @@ func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:
 		model.is_first_click = false
 
 	# Reveal the tile (i.e the player digs the tile)
-	var was_mine: bool = model.reveal_tile(tile)
-	apply_tile_visual(tile)
+	var was_mine: bool = model.reveal_tile(tile) # Reveals the tile AND returns true if it was a mine
+	apply_tile_visual(tile) # Tile already knows it's state and reveals itself
 
 	# If the tile is a mine, reveal all the mines = Game Over
 	if was_mine:
