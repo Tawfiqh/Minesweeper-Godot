@@ -28,19 +28,25 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
-const ZOOM_STEP: float = 2
-const MIN_ZOOM_DISTANCE: float = 6.0
-const MAX_ZOOM_DISTANCE: float = 30.0
 #const THREE_D_ENABLED: bool = true
 @onready var THREE_D_ENABLED: CheckButton = $"CanvasLayer/Control/3dToggle"
 
 
 var model: GameModel
+var camera_controller
 
 
 func _ready() -> void:
 	model = GameModel.new()
 	SignalBus.tile_pressed.connect(_on_tile_pressed)
+
+	camera_controller = load("res://scripts/camera_controller.gd").new()
+	camera_controller.setup(
+		$cameraTwistPivot,
+		$cameraTwistPivot/cameraPitchPivot,
+		camera,
+		tile_container
+	)
 
 	row_slider.value = 11
 	mine_slider.value = 20
@@ -272,59 +278,24 @@ func _on_mine_slider_value_changed(value: float) -> void:
 	_update_mine_custom_counter(value)
 
 func _update_camera_rotation(horizontal, vertical) -> void:
-	_update_twist_rotation(horizontal)
-	_update_pitch_rotation(vertical)
+	camera_controller._update_camera_rotation(horizontal, vertical)
 
-func _update_twist_rotation(x_rotation) -> void:
-	# twist_pivot.rotate_z(x_rotation)
-	$cameraTwistPivot.rotate_y(x_rotation)
-	#twist_pivot.rotation.y = clamp(
-		#twist_pivot.rotation.y,
-		#deg_to_rad(-30),
-		#deg_to_rad(30)
-	#)
-
-func _update_pitch_rotation(y_rotation) -> void:
-	$cameraTwistPivot/cameraPitchPivot.rotate_x(y_rotation)
-	# pitch_pivot.rotation.x = clamp(
-	# 	pitch_pivot.rotation.x,
-	# 	deg_to_rad(-30),
-	# 	deg_to_rad(30)
-	# )
-
-const rotation_step: float = 0.25
 func rotate_camera_up() -> void:
-	_update_camera_rotation(0, -rotation_step)
+	camera_controller.rotate_camera_up()
 
 func rotate_camera_down() -> void:
-	_update_camera_rotation(0, rotation_step)
+	camera_controller.rotate_camera_down()
 
 func rotate_camera_left() -> void:
-	_update_camera_rotation(-rotation_step, 0)
+	camera_controller.rotate_camera_left()
 
 func rotate_camera_right() -> void:
-	_update_camera_rotation(rotation_step, 0)
+	camera_controller.rotate_camera_right()
 
 
 func zoom_in() -> void:
-	if not camera:
-		return
-	var focus: Vector3 = tile_container.global_position
-	var to_camera: Vector3 = camera.global_position - focus
-	var distance: float = to_camera.length()
-	if distance <= MIN_ZOOM_DISTANCE:
-		return
-	var new_distance: float = max(MIN_ZOOM_DISTANCE, distance - ZOOM_STEP)
-	camera.global_position = focus + to_camera.normalized() * new_distance
+	camera_controller.zoom_in()
 
 
 func zoom_out() -> void:
-	if not camera:
-		return
-	var focus: Vector3 = tile_container.global_position
-	var to_camera: Vector3 = camera.global_position - focus
-	var distance: float = to_camera.length()
-	if distance >= MAX_ZOOM_DISTANCE:
-		return
-	var new_distance: float = min(MAX_ZOOM_DISTANCE, distance + ZOOM_STEP)
-	camera.global_position = focus + to_camera.normalized() * new_distance
+	camera_controller.zoom_out()
