@@ -277,6 +277,20 @@ func _on_row_slider_value_changed(value: float) -> void:
 func _on_mine_slider_value_changed(value: float) -> void:
 	_update_mine_custom_counter(value)
 
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var motion := event as InputEventMouseMotion
+		if (motion.button_mask & MOUSE_BUTTON_MASK_MIDDLE) != 0:
+			camera_controller.rotate_with_mouse(motion.relative)
+	elif event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.pressed:
+			if mb.button_index == MOUSE_BUTTON_WHEEL_UP:
+				camera_controller.zoom_in()
+			elif mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				camera_controller.zoom_out()
+
 func _update_camera_rotation(horizontal, vertical) -> void:
 	camera_controller._update_camera_rotation(horizontal, vertical)
 
