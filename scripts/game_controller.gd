@@ -25,10 +25,17 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.005) # Grey and transparent
 @onready var row_slider: HSlider = $CanvasLayer/Control/RowSlider
 @onready var mine_slider: HSlider = $CanvasLayer/Control/MineSlider
 @onready var camera: Camera3D = $cameraTwistPivot/cameraPitchPivot/Camera3D
+@onready var grid_spacing_slider: HSlider = $CanvasLayer/Control/GridSpacingSlider
+
+
+@export var GRID_SPACING: float:
+	get:
+		return grid_spacing_slider.value
+	set(value):
+		grid_spacing_slider.value = value
+
 
 const TILE = preload("res://scenes/tile.tscn")
-const GRID_SPACING: float = 1.5
-#const THREE_D_ENABLED: bool = true
 @onready var THREE_D_ENABLED: CheckButton = $"CanvasLayer/Control/3dToggle"
 
 
@@ -71,22 +78,19 @@ func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
 	return tile_instance
 
 
-func generate_tiles(gridDimensions: int, mines: int) -> void:
-	_reset_game()
-
-	model.configure(gridDimensions, mines, THREE_D_ENABLED.button_pressed)
+func iterate_tiles_and_update_positions(gridDimensions: int, zDepth: int, generateNewGrid: bool = false) -> Array[Tile]:
+	var new_grid: Array[Tile] = []
 	
 	var x_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-width from the center of the grid
 	var y_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
 	
 	var z_offset: float = 0
-	if model.zdepth > 1:
-		z_offset = (model.zdepth - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
+	if zDepth > 1:
+		z_offset = (zDepth - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
+
 	# print("🔪🔪[GameController] z_offset=%s" % z_offset)
 	
-	# XXY - This touches the grid directly, we need to refactor this to use the grid array
-	var new_grid: Array[Tile] = []
-	for z in range(model.zdepth): # columns
+	for z in range(zDepth): # columns
 		for y in range(gridDimensions): # rows
 			for x in range(gridDimensions): # columns
 				# print("🔪🔪[GameController] x=%s y=%s z=%s z_offset=%s" % [x, y, z, z_offset])
@@ -96,8 +100,26 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 					 y * GRID_SPACING - y_offset
 					  ) # position of the tile
 				var grid_index: int = model.index_of_position(x, y, z)
-				var tile: Tile = add_tile(tile_pos, grid_index, z, y, x)
-				new_grid.append(tile)
+				if generateNewGrid:
+					var tile: Tile = add_tile(tile_pos, grid_index, z, y, x)
+					new_grid.append(tile)
+				else:
+					var existing_tile: Tile = model.tile_at_position(x, y, z)
+					if existing_tile:
+						existing_tile.position = tile_pos
+						new_grid.append(existing_tile)
+	return new_grid
+
+
+func generate_tiles(gridDimensions: int, mines: int) -> void:
+	_reset_game()
+
+	model.configure(gridDimensions, mines, THREE_D_ENABLED.button_pressed)
+	
+
+	# XXY - This touches the grid directly, we need to refactor this to use the grid array
+	var new_grid: Array[Tile] = iterate_tiles_and_update_positions(gridDimensions, model.zdepth, true)
+
 
 	model.set_grid(new_grid)
 	model.prepare_new_game()
@@ -284,6 +306,13 @@ func _on_row_slider_value_changed(value: float) -> void:
 
 func _on_mine_slider_value_changed(value: float) -> void:
 	_update_mine_custom_counter(value)
+
+
+func _on_grid_spacing_slider_value_changed(_value: float) -> void:
+	# Regenerate the current game with the same dimensions and mine count,
+	# but using the new GRID_SPACING value from the slider.
+	if model:
+		generate_tiles(model.grid_dimensions, model.zdepth)
 
 
 func _unhandled_input(event: InputEvent) -> void:

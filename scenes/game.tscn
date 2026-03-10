@@ -201,6 +201,7 @@ theme_override_font_sizes/font_size = 18
 text = "Hard"
 
 [node name="CustomGame" type="Button" parent="CanvasLayer/Control"]
+visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 584.0
@@ -211,6 +212,7 @@ theme_override_font_sizes/font_size = 18
 text = "Custom game"
 
 [node name="RowCounter" type="Label" parent="CanvasLayer/Control"]
+visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 648.0
@@ -220,6 +222,7 @@ text = "Rows: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
 [node name="MineCounter2" type="Label" parent="CanvasLayer/Control"]
+visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 720.0
@@ -229,6 +232,7 @@ text = "Mines: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
 [node name="RowSlider" type="HSlider" parent="CanvasLayer/Control"]
+visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 680.0
@@ -241,6 +245,7 @@ value = 4.0
 scrollable = false
 
 [node name="MineSlider" type="HSlider" parent="CanvasLayer/Control"]
+visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 752.0
@@ -261,15 +266,57 @@ scale = Vector2(1.7, 1.7)
 button_pressed = true
 expand_icon = true
 
+[node name="GridSpacingSlider" type="HSlider" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 1544.0
+offset_top = 176.0
+offset_right = 1704.0
+offset_bottom = 192.0
+theme_override_constants/center_grabber = -1
+min_value = 1.5
+max_value = 5.0
+step = 0.5
+value = 1.5
+scrollable = false
+
+[node name="PlayInstructions" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 24.0
+offset_right = -16.0
+offset_bottom = 64.0
+grow_horizontal = 0
+text = "Left click: reveal    Right click (or hold): flag
+Scroll: zoom                    Middle-drag: rotate
+Use the arrow keys to rotate the minefield"
+label_settings = SubResource("LabelSettings_b1gra")
+horizontal_alignment = 2
+
+[node name="PlayInstructions2" type="Label" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -384.0
+offset_top = 136.0
+offset_right = -256.0
+offset_bottom = 168.0
+grow_horizontal = 0
+text = "Grid Spacing:"
+label_settings = SubResource("LabelSettings_b1gra")
+
 [node name="UP" type="Button" parent="CanvasLayer/Control"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -120.0
-offset_top = 72.0
+offset_top = 136.0
 offset_right = -70.0
-offset_bottom = 122.0
+offset_bottom = 186.0
 grow_horizontal = 0
 text = "↑"
 icon_alignment = 2
@@ -280,9 +327,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -120.0
-offset_top = 136.0
+offset_top = 200.0
 offset_right = -70.0
-offset_bottom = 186.0
+offset_bottom = 250.0
 grow_horizontal = 0
 text = "↓"
 icon_alignment = 2
@@ -293,9 +340,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -184.0
-offset_top = 136.0
+offset_top = 200.0
 offset_right = -134.0
-offset_bottom = 186.0
+offset_bottom = 250.0
 grow_horizontal = 0
 text = "←"
 icon_alignment = 2
@@ -306,9 +353,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -56.0
-offset_top = 136.0
+offset_top = 200.0
 offset_right = -6.0
-offset_bottom = 186.0
+offset_bottom = 250.0
 grow_horizontal = 0
 text = "→"
 icon_alignment = 2
@@ -319,9 +366,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -184.0
-offset_top = 72.0
+offset_top = 136.0
 offset_right = -134.0
-offset_bottom = 122.0
+offset_bottom = 186.0
 grow_horizontal = 0
 text = "+"
 icon_alignment = 2
@@ -332,9 +379,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -56.0
-offset_top = 72.0
+offset_top = 136.0
 offset_right = -6.0
-offset_bottom = 122.0
+offset_bottom = 186.0
 grow_horizontal = 0
 text = "-"
 icon_alignment = 2
@@ -347,6 +394,7 @@ icon_alignment = 2
 [connection signal="pressed" from="CanvasLayer/Control/CustomGame" to="." method="_on_custom_game_pressed"]
 [connection signal="value_changed" from="CanvasLayer/Control/RowSlider" to="." method="_on_row_slider_value_changed"]
 [connection signal="value_changed" from="CanvasLayer/Control/MineSlider" to="." method="_on_mine_slider_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/Control/GridSpacingSlider" to="." method="_on_grid_spacing_slider_value_changed"]
 [connection signal="pressed" from="CanvasLayer/Control/UP" to="." method="rotate_camera_up"]
 [connection signal="pressed" from="CanvasLayer/Control/Down" to="." method="rotate_camera_down"]
 [connection signal="pressed" from="CanvasLayer/Control/Left" to="." method="rotate_camera_left"]
