@@ -27,7 +27,9 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
-const THREE_D_ENABLED: bool = true
+#const THREE_D_ENABLED: bool = true
+@onready var THREE_D_ENABLED: CheckButton = $"CanvasLayer/Control/3dToggle"
+
 
 var model: GameModel
 
@@ -62,7 +64,7 @@ func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
 func generate_tiles(gridDimensions: int, mines: int) -> void:
 	_reset_game()
 
-	model.configure(gridDimensions, mines, THREE_D_ENABLED)
+	model.configure(gridDimensions, mines, THREE_D_ENABLED.button_pressed)
 	
 	var x_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-width from the center of the grid
 	var y_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
@@ -70,7 +72,7 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	var z_offset: float = 0
 	if model.zdepth > 1:
 		z_offset = (model.zdepth - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
-	print("🔪🔪[GameController] z_offset=%s" % z_offset)
+	# print("🔪🔪[GameController] z_offset=%s" % z_offset)
 	
 	# XXY - This touches the grid directly, we need to refactor this to use the grid array
 	var new_grid: Array[Tile] = []
@@ -234,7 +236,7 @@ func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:
 		model.can_click = false
 
 
-func _on_timer_timeout() -> void:
+func _on_timer_timeout() -> void: # This is called every second
 	model.seconds += 1
 	if model.seconds >= 60:
 		model.minutes += 1
@@ -264,3 +266,36 @@ func _on_row_slider_value_changed(value: float) -> void:
 
 func _on_mine_slider_value_changed(value: float) -> void:
 	_update_mine_custom_counter(value)
+
+func _update_camera_rotation(horizontal, vertical) -> void:
+	_update_twist_rotation(horizontal)
+	_update_pitch_rotation(vertical)
+
+func _update_twist_rotation(x_rotation) -> void:
+	# twist_pivot.rotate_z(x_rotation)
+	$cameraTwistPivot.rotate_y(x_rotation)
+	#twist_pivot.rotation.y = clamp(
+		#twist_pivot.rotation.y,
+		#deg_to_rad(-30),
+		#deg_to_rad(30)
+	#)
+
+func _update_pitch_rotation(y_rotation) -> void:
+	$cameraTwistPivot/cameraPitchPivot.rotate_x(y_rotation)
+	# pitch_pivot.rotation.x = clamp(
+	# 	pitch_pivot.rotation.x,
+	# 	deg_to_rad(-30),
+	# 	deg_to_rad(30)
+	# )
+
+func rotate_camera_up() -> void:
+	_update_camera_rotation(0, -0.1)
+
+func rotate_camera_down() -> void:
+	_update_camera_rotation(0, 0.1)
+
+func rotate_camera_left() -> void:
+	_update_camera_rotation(-0.1, 0)
+
+func rotate_camera_right() -> void:
+	_update_camera_rotation(0.1, 0)

@@ -2,3 +2,6 @@
 .godot/
 /android/
 export dist/*
+exportviosion/*
+.DS_Store
+**/.DS_Store
