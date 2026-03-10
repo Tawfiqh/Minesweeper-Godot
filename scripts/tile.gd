@@ -26,22 +26,41 @@ var is_flagged: bool = false
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 const DEBOUNCE_MS: int = 250
+const LONG_PRESS_MS: int = 500
 var _last_click_time: int = 0
+var _press_start_time: int = 0
 
 
 func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
-	if not event is InputEventMouseButton:
+	if not event is InputEventMouseButton or not is_hidden:
 		return
+
 	var mb: InputEventMouseButton = event
-	if not mb.pressed or not is_hidden:
-		return
 	var now: int = Time.get_ticks_msec()
-	if now - _last_click_time < DEBOUNCE_MS:
+
+	# Desktop right‑click still flags immediately.
+	if mb.button_index == MOUSE_BUTTON_RIGHT:
+		if not mb.pressed:
+			return
+		if now - _last_click_time < DEBOUNCE_MS: # Don't double trigger on click events
+			return
+		_last_click_time = now
+		# print("🔪🔪[Tile] input_event grid_index=%s button_index=%s (right-click)" % [grid_index, mb.button_index])
+		SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_RIGHT)
 		return
-	_last_click_time = now
-	print("🔪🔪[Tile] input_event grid_index=%s button_index=%s" % [grid_index, mb.button_index])
-	match mb.button_index:
-		MOUSE_BUTTON_LEFT:
-			SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_LEFT)
-		MOUSE_BUTTON_RIGHT:
-			SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_RIGHT)
+
+	# Left button: short press = reveal, long-press = flag (mobile-friendly).
+	if mb.button_index == MOUSE_BUTTON_LEFT:
+		print("🔪🔪🔪🔪[Tile] input_event grid_index=%s button_index=%s (duration=%s ms)" % [grid_index, mb.button_index, now - _press_start_time])
+		if mb.pressed:
+			_press_start_time = now
+			return
+
+		var duration: int = now - _press_start_time
+		if now - _last_click_time < DEBOUNCE_MS:
+			return
+		_last_click_time = now
+
+		var as_button: int = MOUSE_BUTTON_RIGHT if duration >= LONG_PRESS_MS else MOUSE_BUTTON_LEFT
+		print("🔪🔪🔪🔪[Tile] input_event grid_index=%s button_index=%s (duration=%s ms -> %s)" % [grid_index, mb.button_index, duration, as_button])
+		SignalBus.tile_pressed.emit(grid_index, as_button)
