@@ -24,6 +24,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 @onready var mine_counter_2: Label = $CanvasLayer/Control/MineCounter2
 @onready var row_slider: HSlider = $CanvasLayer/Control/RowSlider
 @onready var mine_slider: HSlider = $CanvasLayer/Control/MineSlider
+@onready var camera: Camera3D = $cameraTwistPivot/cameraPitchPivot/Camera3D
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
@@ -299,3 +300,15 @@ func rotate_camera_left() -> void:
 
 func rotate_camera_right() -> void:
 	_update_camera_rotation(0.1, 0)
+
+
+func zoom_in() -> void:
+	if not camera:
+		return
+	camera.fov = clamp(camera.fov - 5.0, 30.0, 100.0)
+
+
+func zoom_out() -> void:
+	if not camera:
+		return
+	camera.fov = clamp(camera.fov + 5.0, 30.0, 100.0)

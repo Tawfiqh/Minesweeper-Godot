@@ -318,6 +318,32 @@ grow_horizontal = 0
 text = "→"
 icon_alignment = 2
 
+[node name="ZoomIn" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = 200.0
+offset_right = -134.0
+offset_bottom = 250.0
+grow_horizontal = 0
+text = "+"
+icon_alignment = 2
+
+[node name="ZoomOut" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 200.0
+offset_right = -70.0
+offset_bottom = 250.0
+grow_horizontal = 0
+text = "-"
+icon_alignment = 2
+
 [node name="Timer" type="Timer" parent="."]
 
 [connection signal="pressed" from="CanvasLayer/Control/Easy" to="." method="_on_easy_pressed"]
@@ -330,4 +356,6 @@ icon_alignment = 2
 [connection signal="pressed" from="CanvasLayer/Control/Down" to="." method="rotate_camera_down"]
 [connection signal="pressed" from="CanvasLayer/Control/Left" to="." method="rotate_camera_left"]
 [connection signal="pressed" from="CanvasLayer/Control/Right" to="." method="rotate_camera_right"]
+[connection signal="pressed" from="CanvasLayer/Control/ZoomIn" to="." method="zoom_in"]
+[connection signal="pressed" from="CanvasLayer/Control/ZoomOut" to="." method="zoom_out"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
