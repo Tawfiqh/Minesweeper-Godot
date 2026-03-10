@@ -26,9 +26,18 @@ var is_flagged: bool = false
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 const DEBOUNCE_MS: int = 250
-const LONG_PRESS_MS: int = 500
+const LONG_PRESS_MS: int = 300
 var _last_click_time: int = 0
-var _press_start_time: int = 0
+var _is_pressing_left: bool = false
+var _long_press_triggered: bool = false
+var _long_press_timer: Timer
+
+
+func _ready() -> void:
+	_long_press_timer = Timer.new()
+	_long_press_timer.one_shot = true
+	add_child(_long_press_timer)
+	_long_press_timer.timeout.connect(_on_long_press_timeout)
 
 
 func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
@@ -51,16 +60,35 @@ func _input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _n
 
 	# Left button: short press = reveal, long-press = flag (mobile-friendly).
 	if mb.button_index == MOUSE_BUTTON_LEFT:
-		print("🔪🔪🔪🔪[Tile] input_event grid_index=%s button_index=%s (duration=%s ms)" % [grid_index, mb.button_index, now - _press_start_time])
+		print("🔪🔪🔪🔪[Tile] input_event grid_index=%s button_index=%s (duration=%s ms)" % [grid_index, mb.button_index])
 		if mb.pressed:
-			_press_start_time = now
+			_is_pressing_left = true
+			_long_press_triggered = false
+			_long_press_timer.start(float(LONG_PRESS_MS) / 1000.0)
 			return
 
-		var duration: int = now - _press_start_time
+		# On release: stop tracking and either do nothing (if long‑press already fired)
+		# or treat it as a normal left click (reveal).
+		_is_pressing_left = false
+		_long_press_timer.stop()
+
+		if _long_press_triggered:
+			return
+
 		if now - _last_click_time < DEBOUNCE_MS:
 			return
 		_last_click_time = now
+		SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_LEFT)
 
-		var as_button: int = MOUSE_BUTTON_RIGHT if duration >= LONG_PRESS_MS else MOUSE_BUTTON_LEFT
-		print("🔪🔪🔪🔪[Tile] input_event grid_index=%s button_index=%s (duration=%s ms -> %s)" % [grid_index, mb.button_index, duration, as_button])
-		SignalBus.tile_pressed.emit(grid_index, as_button)
+
+func _on_long_press_timeout() -> void:
+	if not _is_pressing_left or not is_hidden:
+		return
+
+	var now: int = Time.get_ticks_msec()
+	if now - _last_click_time < DEBOUNCE_MS:
+		return
+
+	_last_click_time = now
+	_long_press_triggered = true
+	SignalBus.tile_pressed.emit(grid_index, MOUSE_BUTTON_RIGHT)
