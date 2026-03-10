@@ -28,6 +28,9 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
+const ZOOM_STEP: float = 1.0
+const MIN_ZOOM_DISTANCE: float = 6.0
+const MAX_ZOOM_DISTANCE: float = 30.0
 #const THREE_D_ENABLED: bool = true
 @onready var THREE_D_ENABLED: CheckButton = $"CanvasLayer/Control/3dToggle"
 
@@ -80,7 +83,7 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	for z in range(model.zdepth): # columns
 		for y in range(gridDimensions): # rows
 			for x in range(gridDimensions): # columns
-				print("🔪🔪[GameController] x=%s y=%s z=%s z_offset=%s" % [x, y, z, z_offset])
+				# print("🔪🔪[GameController] x=%s y=%s z=%s z_offset=%s" % [x, y, z, z_offset])
 				var tile_pos: Vector3 = Vector3(
 					x * GRID_SPACING - x_offset,
 					 z * GRID_SPACING - z_offset,
@@ -305,10 +308,22 @@ func rotate_camera_right() -> void:
 func zoom_in() -> void:
 	if not camera:
 		return
-	camera.fov = clamp(camera.fov - 5.0, 30.0, 100.0)
+	var focus: Vector3 = tile_container.global_position
+	var to_camera: Vector3 = camera.global_position - focus
+	var distance: float = to_camera.length()
+	if distance <= MIN_ZOOM_DISTANCE:
+		return
+	var new_distance: float = max(MIN_ZOOM_DISTANCE, distance - ZOOM_STEP)
+	camera.global_position = focus + to_camera.normalized() * new_distance
 
 
 func zoom_out() -> void:
 	if not camera:
 		return
-	camera.fov = clamp(camera.fov + 5.0, 30.0, 100.0)
+	var focus: Vector3 = tile_container.global_position
+	var to_camera: Vector3 = camera.global_position - focus
+	var distance: float = to_camera.length()
+	if distance >= MAX_ZOOM_DISTANCE:
+		return
+	var new_distance: float = min(MAX_ZOOM_DISTANCE, distance + ZOOM_STEP)
+	camera.global_position = focus + to_camera.normalized() * new_distance
