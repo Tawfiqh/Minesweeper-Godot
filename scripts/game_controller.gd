@@ -13,7 +13,7 @@ const CAUTION_5 = Color(0, baseColourSaturation, baseColourSaturation)
 const CAUTION_6 = Color(baseColourSaturation, 0, baseColourSaturation)
 const CAUTION_7 = Color(baseColourSaturation, 0.1 * baseColourSaturation, baseColourSaturation)
 const CAUTION_8 = Color(baseColourSaturation, 0.2 * baseColourSaturation, baseColourSaturation)
-const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
+const SAFE = Color(0.65, 0.65, 0.65, 0.005) # Grey and transparent
 
 
 @onready var mine_counter: Label = $CanvasLayer/Control/MineCounter
@@ -101,7 +101,7 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 
 	model.set_grid(new_grid)
 	model.prepare_new_game()
-	for t in new_grid:
+	for t: Tile in new_grid:
 		apply_tile_visual(t)
 	_update_mine_guess_counter()
 	_update_time()
@@ -168,7 +168,7 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 	return mat
 
 
-func apply_tile_visual(tile) -> void:
+func apply_tile_visual(tile: Tile) -> void:
 	if tile.mesh_instance:
 		tile.mesh_instance.material_override = _material_for_tile(tile)
 	if tile.number_label:
@@ -177,6 +177,14 @@ func apply_tile_visual(tile) -> void:
 			tile.number_label.visible = true
 		else:
 			tile.number_label.visible = false
+
+	# For revealed SAFE tiles, make them non-interactive so they don't receive mouse input.
+	if tile.state == GameModel.States.SAFE and not tile.is_hidden and tile.collision_shape:
+		tile.collision_shape.disabled = true
+		tile.input_ray_pickable = false
+
+	elif tile.collision_shape:
+		tile.collision_shape.disabled = false
 
 
 func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:

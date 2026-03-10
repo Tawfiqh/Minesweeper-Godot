@@ -23,6 +23,7 @@ var is_flagged: bool = false
 
 @onready var mesh_instance: CSGBox3D = $MainBox
 @onready var number_label: Label3D = $NumberLabel
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 const DEBOUNCE_MS: int = 250
 var _last_click_time: int = 0
