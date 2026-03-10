@@ -312,7 +312,8 @@ func _on_grid_spacing_slider_value_changed(_value: float) -> void:
 	# Regenerate the current game with the same dimensions and mine count,
 	# but using the new GRID_SPACING value from the slider.
 	if model:
-		generate_tiles(model.grid_dimensions, model.zdepth)
+		print("🧊[GameController] adjusting grid spacing to %s" % GRID_SPACING)
+		iterate_tiles_and_update_positions(model.grid_dimensions, model.zdepth)
 
 
 func _unhandled_input(event: InputEvent) -> void:

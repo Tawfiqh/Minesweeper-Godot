@@ -43,7 +43,7 @@ func _update_twist_rotation(horizontalRotation: float) -> void:
 func _update_pitch_rotation(verticalRotation: float) -> void:
 	if pitch_pivot:
 		pitch_pivot.rotate_x(verticalRotation) # Rotate about the X-axis
-		print("🎥[CameraController] verticalRotation=%s" % rad_to_deg(pitch_pivot.rotation.x))
+		# print("🎥[CameraController] verticalRotation=%s" % rad_to_deg(pitch_pivot.rotation.x))
 		pitch_pivot.rotation.x = clamp(
 			pitch_pivot.rotation.x,
 			deg_to_rad(-30),
@@ -92,6 +92,6 @@ func zoom_out() -> void:
 
 
 func rotate_with_mouse(delta: Vector2) -> void:
-	var horizontal: float = -delta.x * MOUSE_ROTATION_SENSITIVITY
-	var vertical: float = -delta.y * MOUSE_ROTATION_SENSITIVITY
+	var horizontal: float = - delta.x * MOUSE_ROTATION_SENSITIVITY
+	var vertical: float = - delta.y * MOUSE_ROTATION_SENSITIVITY
 	_update_camera_rotation(horizontal, vertical)
