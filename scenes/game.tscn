@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://6buicxxj4a1p"]
+[gd_scene load_steps=10 format=3 uid="uid://6buicxxj4a1p"]
 
 [ext_resource type="Script" uid="uid://ctg4hq0pqoufy" path="res://scripts/game_controller.gd" id="1_m35v1"]
 
@@ -13,11 +13,6 @@ sky_material = SubResource("ProceduralSkyMaterial_uwrxv")
 background_mode = 2
 sky = SubResource("Sky_yqjtg")
 tonemap_mode = 2
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_uwrxv"]
-size = Vector2(5, 2)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uwrxv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xgd6b"]
 font_size = 24
@@ -67,11 +62,6 @@ fov = 82.0
 near = 0.039
 
 [node name="TileContainer" type="Node3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.075421, 0)
-mesh = SubResource("PlaneMesh_uwrxv")
-surface_material_override/0 = SubResource("StandardMaterial3D_uwrxv")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -264,6 +254,7 @@ offset_top = 168.0
 offset_right = 179.99998
 offset_bottom = 192.0
 scale = Vector2(1.7, 1.7)
+button_pressed = true
 expand_icon = true
 
 [node name="UP" type="Button" parent="CanvasLayer/Control"]

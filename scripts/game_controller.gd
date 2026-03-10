@@ -28,7 +28,7 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.1) # Green and transparent
 
 const TILE = preload("res://scenes/tile.tscn")
 const GRID_SPACING: float = 1.5
-const ZOOM_STEP: float = 1.0
+const ZOOM_STEP: float = 2
 const MIN_ZOOM_DISTANCE: float = 6.0
 const MAX_ZOOM_DISTANCE: float = 30.0
 #const THREE_D_ENABLED: bool = true
@@ -292,17 +292,18 @@ func _update_pitch_rotation(y_rotation) -> void:
 	# 	deg_to_rad(30)
 	# )
 
+const rotation_step: float = 0.25
 func rotate_camera_up() -> void:
-	_update_camera_rotation(0, -0.1)
+	_update_camera_rotation(0, -rotation_step)
 
 func rotate_camera_down() -> void:
-	_update_camera_rotation(0, 0.1)
+	_update_camera_rotation(0, rotation_step)
 
 func rotate_camera_left() -> void:
-	_update_camera_rotation(-0.1, 0)
+	_update_camera_rotation(-rotation_step, 0)
 
 func rotate_camera_right() -> void:
-	_update_camera_rotation(0.1, 0)
+	_update_camera_rotation(rotation_step, 0)
 
 
 func zoom_in() -> void:
