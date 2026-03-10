@@ -1,7 +1,7 @@
 # Todo
 
 - ✅ Zoom in and zoom out
-- limit rotation on vertical
+- ✅ limit rotation on vertical
 - Hide ones that are empty
 - middle mouse button to control camera freely
 - Crashes on any large grids

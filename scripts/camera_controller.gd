@@ -3,10 +3,10 @@ extends RefCounted
 class_name CameraController
 
 
-const ZOOM_STEP: float = 2.0
+const ZOOM_STEP: float = 4.0
 const MIN_ZOOM_DISTANCE: float = 6.0
 const MAX_ZOOM_DISTANCE: float = 30.0
-const ROTATION_STEP: float = 0.25
+const ROTATION_STEP: float = deg_to_rad(30)
 
 
 var twist_pivot: Node3D
@@ -32,14 +32,22 @@ func _update_camera_rotation(horizontal: float, vertical: float) -> void:
 	_update_pitch_rotation(vertical)
 
 
-func _update_twist_rotation(x_rotation: float) -> void:
+# This is the horizontal rotation
+func _update_twist_rotation(horizontalRotation: float) -> void:
 	if twist_pivot:
-		twist_pivot.rotate_y(x_rotation)
+		twist_pivot.rotate_y(horizontalRotation)
 
 
-func _update_pitch_rotation(y_rotation: float) -> void:
+# This is the vertical rotation
+func _update_pitch_rotation(verticalRotation: float) -> void:
 	if pitch_pivot:
-		pitch_pivot.rotate_x(y_rotation)
+		pitch_pivot.rotate_x(verticalRotation) # Rotate about the X-axis
+		print("🎥[CameraController] verticalRotation=%s" % rad_to_deg(pitch_pivot.rotation.x))
+		pitch_pivot.rotation.x = clamp(
+			pitch_pivot.rotation.x,
+			deg_to_rad(-30),
+			deg_to_rad(150)
+		)
 
 
 func rotate_camera_up() -> void:
@@ -80,4 +88,3 @@ func zoom_out() -> void:
 		return
 	var new_distance: float = min(MAX_ZOOM_DISTANCE, distance + ZOOM_STEP)
 	camera.global_position = focus + to_camera.normalized() * new_distance
-
