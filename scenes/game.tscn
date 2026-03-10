@@ -394,6 +394,7 @@ icon_alignment = 2
 [connection signal="pressed" from="CanvasLayer/Control/CustomGame" to="." method="_on_custom_game_pressed"]
 [connection signal="value_changed" from="CanvasLayer/Control/RowSlider" to="." method="_on_row_slider_value_changed"]
 [connection signal="value_changed" from="CanvasLayer/Control/MineSlider" to="." method="_on_mine_slider_value_changed"]
+[connection signal="pressed" from="CanvasLayer/Control/3dToggle" to="." method="_on_d_toggle_pressed"]
 [connection signal="value_changed" from="CanvasLayer/Control/GridSpacingSlider" to="." method="_on_grid_spacing_slider_value_changed"]
 [connection signal="pressed" from="CanvasLayer/Control/UP" to="." method="rotate_camera_up"]
 [connection signal="pressed" from="CanvasLayer/Control/Down" to="." method="rotate_camera_down"]

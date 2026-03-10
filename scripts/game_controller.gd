@@ -36,7 +36,11 @@ const SAFE = Color(0.65, 0.65, 0.65, 0.005) # Grey and transparent
 
 
 const TILE = preload("res://scenes/tile.tscn")
-@onready var THREE_D_ENABLED: CheckButton = $"CanvasLayer/Control/3dToggle"
+@onready var three_d_enable_toggle: CheckButton = $"CanvasLayer/Control/3dToggle"
+
+@export var THREE_D_ENABLED: bool:
+	get:
+		return three_d_enable_toggle.button_pressed
 
 
 var model: GameModel
@@ -153,7 +157,7 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	var total_start_ms := Time.get_ticks_msec()
 	_reset_game()
 
-	model.configure(gridDimensions, mines, THREE_D_ENABLED.button_pressed)
+	model.configure(gridDimensions, mines, THREE_D_ENABLED)
 
 
 	# XXY - This touches the grid directly, we need to refactor this to use the grid array
@@ -378,16 +382,46 @@ func _on_timer_timeout() -> void: # This is called every second
 	_update_time()
 
 
-func _on_easy_pressed() -> void:
-	generate_tiles(10, 12)
+func _on_d_toggle_pressed() -> void:
+	_new_game(previousGameDimensions, previousGamePercentageOfMines, previousGameDifficulty)
 
+const easyGameDimensions: int = 10
+const easyGamePercentageOfMines: float = 0.015
+const easyGameDifficulty: String = "Easy MODE"
+
+# Starting values can be changed later
+var previousGameDimensions: int = easyGameDimensions
+var previousGamePercentageOfMines: float = easyGamePercentageOfMines
+var previousGameDifficulty: String = easyGameDifficulty
+
+func _new_game(grid_dimensions: int, percentageOfMines: float, difficulty: String) -> void:
+	# Save these so that if 3d is toggled off, we can use the same dimensions and percentage of mines to reset the game for the same difficulty
+	previousGameDimensions = grid_dimensions
+	previousGamePercentageOfMines = percentageOfMines
+	previousGameDifficulty = difficulty
+
+	var total_cubes: int = 0
+	if THREE_D_ENABLED:
+		total_cubes = grid_dimensions * grid_dimensions * grid_dimensions
+	else:
+		total_cubes = grid_dimensions * grid_dimensions
+
+
+	var numberOfMines: int = int(total_cubes * percentageOfMines)
+
+	print("⛳️ %s: total_cubes: %s, numberOfMines: %s (%.2f%% of total cubes)" % [difficulty, total_cubes, numberOfMines, numberOfMines / total_cubes * 100.0])
+	generate_tiles(grid_dimensions, numberOfMines)
+
+
+func _on_easy_pressed() -> void:
+	_new_game(easyGameDimensions, easyGamePercentageOfMines, easyGameDifficulty)
 
 func _on_normal_pressed() -> void:
-	generate_tiles(14, 25)
+	_new_game(14, 0.15, "Medium MODE")
 
 
 func _on_hard_pressed() -> void:
-	generate_tiles(18, 40)
+	_new_game(18, 0.2, "HARD MODE")
 
 
 func _on_custom_game_pressed() -> void:

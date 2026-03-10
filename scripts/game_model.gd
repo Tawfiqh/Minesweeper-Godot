@@ -100,10 +100,6 @@ func get_nearby_tiles(tile: Tile) -> Array[Tile]:
 				if neighbourX < 0 or neighbourX >= grid_dimensions or neighbourY < 0 or neighbourY >= grid_dimensions or neighbourZ < 0 or neighbourZ >= zdepth:
 					continue
 				nearby_tiles.append(grid[neighbourX + neighbourY * grid_dimensions + neighbourZ * grid_dimensions * grid_dimensions])
-
-	print("\n\n")
-
-
 	return nearby_tiles
 
 

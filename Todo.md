@@ -8,10 +8,9 @@
 - ✅ Add instructions above arrow keys
 - ✅ add slider below arrow keys to change GRID_SPACING
 - ✅ Add input to mark a mine with click and hold
+- ✅ Crashes on any large grids
 
-- Crashes on any large grids
-_on_normal_pressed
-    -> generate_tiles(14, 25)
+- ✅ Play test and make mine to cube ratio better
 
 
-- Play test and make mine to cube ratio better
+- Slow to load grid -> Performance debugging required
