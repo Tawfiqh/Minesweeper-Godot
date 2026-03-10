@@ -64,8 +64,11 @@ func _ready() -> void:
 
 
 func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
+	var t0 := Time.get_ticks_usec()
 	var tile_instance: Tile = TILE.instantiate()
-	tile_container.add_child(tile_instance)
+	var t1 := Time.get_ticks_usec()
+	
+	var t2 := Time.get_ticks_usec()
 	tile_instance.position = pos
 	
 	tile_instance.grid_index = grid_index
@@ -73,54 +76,99 @@ func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
 	tile_instance.y = y
 	tile_instance.x = x
 
+	var t3 := Time.get_ticks_usec()
 	tile_instance.state = GameModel.States.SAFE
+	var t4 := Time.get_ticks_usec()
 	tile_instance.is_hidden = true # TBC - this seems weird -
-	return tile_instance
+	var t5 := Time.get_ticks_usec()
+
+	# Return timing breakdown alongside the tile via a dict so iterate_tiles can accumulate it
+	return {"tile": tile_instance, "instantiate_us": t1 - t0, "position_us": t2 - t1, "state_us": t3 - t2, "is_hidden_us": t4 - t3}
 
 
 func iterate_tiles_and_update_positions(gridDimensions: int, zDepth: int, generateNewGrid: bool = false) -> Array[Tile]:
+	var fn_start_us := Time.get_ticks_usec()
 	var new_grid: Array[Tile] = []
-	
-	var x_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-width from the center of the grid
-	var y_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
-	
+
+	var x_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0
+	var y_offset: float = (gridDimensions - 1) * GRID_SPACING / 2.0
+
 	var z_offset: float = 0
 	if zDepth > 1:
-		z_offset = (zDepth - 1) * GRID_SPACING / 2.0 # offset half-height from the center of the grid
+		z_offset = (zDepth - 1) * GRID_SPACING / 2.0
 
-	# print("🔪🔪[GameController] z_offset=%s" % z_offset)
-	
-	for z in range(zDepth): # columns
-		for y in range(gridDimensions): # rows
-			for x in range(gridDimensions): # columns
-				# print("🔪🔪[GameController] x=%s y=%s z=%s z_offset=%s" % [x, y, z, z_offset])
+	# Accumulated µs per sub-operation
+	var acc_index_of_pos_us: int = 0
+	var acc_instantiate_us: int = 0
+	var acc_add_child_us: int = 0
+	var acc_tile_at_pos_us: int = 0
+	var acc_position_us: int = 0
+	var acc_state_us: int = 0
+	var acc_is_hidden_us: int = 0
+	for z in range(zDepth):
+		for y in range(gridDimensions):
+			for x in range(gridDimensions):
 				var tile_pos: Vector3 = Vector3(
 					x * GRID_SPACING - x_offset,
-					 z * GRID_SPACING - z_offset,
-					 y * GRID_SPACING - y_offset
-					  ) # position of the tile
+					z * GRID_SPACING - z_offset,
+					y * GRID_SPACING - y_offset
+				)
+
+				var t0 := Time.get_ticks_usec()
 				var grid_index: int = model.index_of_position(x, y, z)
+				acc_index_of_pos_us += Time.get_ticks_usec() - t0
+
 				if generateNewGrid:
-					var tile: Tile = add_tile(tile_pos, grid_index, z, y, x)
-					new_grid.append(tile)
+					var result: Dictionary = add_tile(tile_pos, grid_index, z, y, x)
+					acc_instantiate_us += result["instantiate_us"]
+					acc_position_us += result["position_us"]
+					acc_state_us += result["state_us"]
+					acc_is_hidden_us += result["is_hidden_us"]
+					new_grid.append(result["tile"])
 				else:
+					t0 = Time.get_ticks_usec()
 					var existing_tile: Tile = model.tile_at_position(x, y, z)
+					acc_tile_at_pos_us += Time.get_ticks_usec() - t0
 					if existing_tile:
 						existing_tile.position = tile_pos
 						new_grid.append(existing_tile)
+
+	var total_us: int = Time.get_ticks_usec() - fn_start_us
+	var tile_count: int = new_grid.size()
+	var tc := float(max(tile_count, 1))
+	print("⏱ [1/3] iterate_tiles_and_update_positions  TOTAL:      %.1f ms  (%d tiles, grid=%d, depth=%d, new=%s)" % [total_us / 1000.0, tile_count, gridDimensions, zDepth, str(generateNewGrid)])
+	print("⏱   index_of_position (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_index_of_pos_us / 1000.0, acc_index_of_pos_us / tc])
+	if generateNewGrid:
+		print("⏱   TILE.instantiate() (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_instantiate_us / 1000.0, acc_instantiate_us / tc])
+		print("⏱   position()         (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_position_us / 1000.0, acc_position_us / tc])
+		print("⏱   state()            (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_state_us / 1000.0, acc_state_us / tc])
+		print("⏱   is_hidden()        (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_is_hidden_us / 1000.0, acc_is_hidden_us / tc])
+	else:
+		print("⏱   tile_at_position   (accumulated):  %.1f ms  (~%.1f µs/tile)" % [acc_tile_at_pos_us / 1000.0, acc_tile_at_pos_us / tc])
+	print("⏱   unaccounted overhead:              %.1f ms" % [(total_us - acc_index_of_pos_us - acc_instantiate_us - acc_add_child_us - acc_tile_at_pos_us) / 1000.0])
 	return new_grid
 
 
 func generate_tiles(gridDimensions: int, mines: int) -> void:
+	print("\n\n⏱[START] generating tiles (grid=%d, mines=%d)" % [gridDimensions, mines])
+	var total_start_ms := Time.get_ticks_msec()
 	_reset_game()
 
 	model.configure(gridDimensions, mines, THREE_D_ENABLED.button_pressed)
-	
+
 
 	# XXY - This touches the grid directly, we need to refactor this to use the grid array
+	var step_start_ms := Time.get_ticks_msec()
 	var new_grid: Array[Tile] = iterate_tiles_and_update_positions(gridDimensions, model.zdepth, true)
+	
+	print("⏱ [1/3] iterate_tiles_and_update_positions took %d ms" % [Time.get_ticks_msec() - step_start_ms])
+
+	step_start_ms = Time.get_ticks_msec()
+	new_grid.all(func(tile: Tile): tile_container.add_child(tile); return true)
+	print("⏱ [2/3] tile_container.add_child took %d ms" % [Time.get_ticks_msec() - step_start_ms])
 
 
+	step_start_ms = Time.get_ticks_msec()
 	model.set_grid(new_grid)
 	model.prepare_new_game()
 	for t: Tile in new_grid:
@@ -128,6 +176,9 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	_update_mine_guess_counter()
 	_update_time()
 	timer.start()
+	print("⏱ [3/3] apply_tile_visual took %d ms" % [Time.get_ticks_msec() - step_start_ms])
+
+	print("⏱ [END] generate_tiles TOTAL: %d ms (grid=%d, depth=%d, tiles=%d)" % [Time.get_ticks_msec() - total_start_ms, gridDimensions, model.zdepth, new_grid.size()])
 
 
 func _reset_game() -> void:

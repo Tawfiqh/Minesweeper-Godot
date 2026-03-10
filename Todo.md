@@ -7,7 +7,7 @@
 - ✅ Add a better skybox - maybe just black
 - ✅ Add instructions above arrow keys
 - ✅ add slider below arrow keys to change GRID_SPACING
-- Add input to mark a mine with click and hold
+- ✅ Add input to mark a mine with click and hold
 
 - Crashes on any large grids
 _on_normal_pressed
