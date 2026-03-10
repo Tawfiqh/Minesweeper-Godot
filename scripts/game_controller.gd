@@ -80,7 +80,6 @@ func add_tile(pos: Vector3, grid_index: int, z: int, y: int, x: int):
 	tile_instance.state = GameModel.States.SAFE
 	var t4 := Time.get_ticks_usec()
 	tile_instance.is_hidden = true # TBC - this seems weird -
-	var t5 := Time.get_ticks_usec()
 
 	# Return timing breakdown alongside the tile via a dict so iterate_tiles can accumulate it
 	return {"tile": tile_instance, "instantiate_us": t1 - t0, "position_us": t2 - t1, "state_us": t3 - t2, "is_hidden_us": t4 - t3}
@@ -171,12 +170,27 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	step_start_ms = Time.get_ticks_msec()
 	model.set_grid(new_grid)
 	model.prepare_new_game()
+
+	var acc_material_us: int = 0
+	var acc_label_us: int = 0
+	var acc_collision_us: int = 0
+	var visual_start_us := Time.get_ticks_usec()
 	for t: Tile in new_grid:
-		apply_tile_visual(t)
+		var timing := apply_tile_visual(t)
+		acc_material_us += timing["material_us"]
+		acc_label_us += timing["label_us"]
+		acc_collision_us += timing["collision_us"]
+	var visual_total_us := Time.get_ticks_usec() - visual_start_us
+	var tc := float(max(new_grid.size(), 1))
+	print("⏱ [3/3] apply_tile_visual loop  TOTAL:     %.1f ms  (%d tiles)" % [visual_total_us / 1000.0, new_grid.size()])
+	print("⏱         _material_for_tile (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_material_us / 1000.0, acc_material_us / tc])
+	print("⏱         number_label       (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_label_us / 1000.0, acc_label_us / tc])
+	print("⏱         collision_shape    (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_collision_us / 1000.0, acc_collision_us / tc])
+	print("⏱         unaccounted overhead:             %.1f ms" % [(visual_total_us - acc_material_us - acc_label_us - acc_collision_us) / 1000.0])
+
 	_update_mine_guess_counter()
 	_update_time()
 	timer.start()
-	print("⏱ [3/3] apply_tile_visual took %d ms" % [Time.get_ticks_msec() - step_start_ms])
 
 	print("⏱ [END] generate_tiles TOTAL: %d ms (grid=%d, depth=%d, tiles=%d)" % [Time.get_ticks_msec() - total_start_ms, gridDimensions, model.zdepth, new_grid.size()])
 
@@ -241,23 +255,31 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 	return mat
 
 
-func apply_tile_visual(tile: Tile) -> void:
+## Returns {material_us, label_us, collision_us} for the caller to accumulate.
+func apply_tile_visual(tile: Tile) -> Dictionary:
+	var t0 := Time.get_ticks_usec()
+
 	if tile.mesh_instance:
 		tile.mesh_instance.material_override = _material_for_tile(tile)
+	var t1 := Time.get_ticks_usec()
+
 	if tile.number_label:
 		if tile.state == GameModel.States.CAUTION and not tile.is_hidden:
 			tile.number_label.text = str(tile.mines_nearby)
 			tile.number_label.visible = true
 		else:
 			tile.number_label.visible = false
+	var t2 := Time.get_ticks_usec()
 
 	# For revealed SAFE tiles, make them non-interactive so they don't receive mouse input.
 	if tile.state == GameModel.States.SAFE and not tile.is_hidden and tile.collision_shape:
 		tile.collision_shape.disabled = true
 		tile.input_ray_pickable = false
-
 	elif tile.collision_shape:
 		tile.collision_shape.disabled = false
+	var t3 := Time.get_ticks_usec()
+
+	return {"material_us": t1 - t0, "label_us": t2 - t1, "collision_us": t3 - t2}
 
 
 func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:
