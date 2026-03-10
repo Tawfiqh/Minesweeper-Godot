@@ -160,7 +160,7 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	var step_start_ms := Time.get_ticks_msec()
 	var new_grid: Array[Tile] = iterate_tiles_and_update_positions(gridDimensions, model.zdepth, true)
 	
-	print("⏱ [1/3] iterate_tiles_and_update_positions took %d ms" % [Time.get_ticks_msec() - step_start_ms])
+	# print("⏱ [1/3] iterate_tiles_and_update_positions took %d ms" % [Time.get_ticks_msec() - step_start_ms])
 
 	step_start_ms = Time.get_ticks_msec()
 	new_grid.all(func(tile: Tile): tile_container.add_child(tile); return true)
@@ -172,20 +172,27 @@ func generate_tiles(gridDimensions: int, mines: int) -> void:
 	model.prepare_new_game()
 
 	var acc_material_us: int = 0
+	var acc_mat_new_us: int = 0
+	var acc_mat_assign_us: int = 0
 	var acc_label_us: int = 0
 	var acc_collision_us: int = 0
 	var visual_start_us := Time.get_ticks_usec()
 	for t: Tile in new_grid:
 		var timing := apply_tile_visual(t)
-		acc_material_us += timing["material_us"]
+		acc_material_us += timing["material_us"] # Complete time taken for apply_tile_visual
+		acc_mat_new_us += timing["mat_new_us"] # New 3d Material3D instance
+		acc_mat_assign_us += timing["mat_assign_us"] # Property assignments to the 3d Material3D instance
 		acc_label_us += timing["label_us"]
 		acc_collision_us += timing["collision_us"]
 	var visual_total_us := Time.get_ticks_usec() - visual_start_us
 	var tc := float(max(new_grid.size(), 1))
-	print("⏱ [3/3] apply_tile_visual loop  TOTAL:     %.1f ms  (%d tiles)" % [visual_total_us / 1000.0, new_grid.size()])
-	print("⏱         _material_for_tile (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_material_us / 1000.0, acc_material_us / tc])
-	print("⏱         number_label       (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_label_us / 1000.0, acc_label_us / tc])
-	print("⏱         collision_shape    (accumulated): %.1f ms  (~%.1f µs/tile)" % [acc_collision_us / 1000.0, acc_collision_us / tc])
+	print("⏱ [3/3] apply_tile_visual loop       TOTAL: %.1f ms  (%d tiles)" % [visual_total_us / 1000.0, new_grid.size()])
+	print("⏱         _material_for_tile   (total):     %.1f ms  (~%.1f µs/tile)" % [acc_material_us / 1000.0, acc_material_us / tc])
+	print("⏱           StandardMaterial3D.new():       %.1f ms  (~%.1f µs/tile)" % [acc_mat_new_us / 1000.0, acc_mat_new_us / tc])
+	print("⏱           property assignments:           %.1f ms  (~%.1f µs/tile)" % [acc_mat_assign_us / 1000.0, acc_mat_assign_us / tc])
+	print("⏱           material_override =  (setter):  %.1f ms  (~%.1f µs/tile)" % [(acc_material_us - acc_mat_new_us - acc_mat_assign_us) / 1000.0, (acc_material_us - acc_mat_new_us - acc_mat_assign_us) / tc])
+	print("⏱         number_label         (total):     %.1f ms  (~%.1f µs/tile)" % [acc_label_us / 1000.0, acc_label_us / tc])
+	print("⏱         collision_shape      (total):     %.1f ms  (~%.1f µs/tile)" % [acc_collision_us / 1000.0, acc_collision_us / tc])
 	print("⏱         unaccounted overhead:             %.1f ms" % [(visual_total_us - acc_material_us - acc_label_us - acc_collision_us) / 1000.0])
 
 	_update_mine_guess_counter()
@@ -224,17 +231,20 @@ func _update_mine_custom_counter(value: float) -> void:
 	mine_counter_2.text = "Mines: %s" % int(value)
 
 
-func _material_for_tile(tile) -> StandardMaterial3D:
+## Returns {mat, new_us, assign_us} for the caller to accumulate.
+func _material_for_tile(tile) -> Dictionary:
+	var t0 := Time.get_ticks_usec()
 	var mat := StandardMaterial3D.new()
+	var t1 := Time.get_ticks_usec()
+
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
 	if tile.is_hidden:
 		mat.albedo_color = Color(0.5, 0.5, 0.55) if not tile.is_flagged else Color(0.85, 0.2, 0.2)
-		return mat
+		return {"mat": mat, "new_us": t1 - t0, "assign_us": Time.get_ticks_usec() - t1}
 	match tile.state:
 		GameModel.States.SAFE:
 			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mat.albedo_color = SAFE
-			
 		GameModel.States.MINE:
 			mat.albedo_color = Color(0.75, 0.15, 0.15) # RED
 		GameModel.States.CAUTION:
@@ -252,15 +262,20 @@ func _material_for_tile(tile) -> StandardMaterial3D:
 			# var n: int = tile.mines_nearby
 			# var t: float = (n - 1) / 7.0
 			# mat.albedo_color = Color(1.0 - t * 0.5, 0.6 + t * 0.3, 0.2)
-	return mat
+	return {"mat": mat, "new_us": t1 - t0, "assign_us": Time.get_ticks_usec() - t1}
 
 
-## Returns {material_us, label_us, collision_us} for the caller to accumulate.
+## Returns {material_us, mat_new_us, mat_assign_us, label_us, collision_us} for the caller to accumulate.
 func apply_tile_visual(tile: Tile) -> Dictionary:
 	var t0 := Time.get_ticks_usec()
 
+	var mat_new_us: int = 0
+	var mat_assign_us: int = 0
 	if tile.mesh_instance:
-		tile.mesh_instance.material_override = _material_for_tile(tile)
+		var mat_timing := _material_for_tile(tile) # EXPENSIVE
+		tile.mesh_instance.material_override = mat_timing["mat"]
+		mat_new_us = mat_timing["new_us"]
+		mat_assign_us = mat_timing["assign_us"]
 	var t1 := Time.get_ticks_usec()
 
 	if tile.number_label:
@@ -279,7 +294,13 @@ func apply_tile_visual(tile: Tile) -> Dictionary:
 		tile.collision_shape.disabled = false
 	var t3 := Time.get_ticks_usec()
 
-	return {"material_us": t1 - t0, "label_us": t2 - t1, "collision_us": t3 - t2}
+	return {
+		"material_us": t1 - t0,
+		"mat_new_us": mat_new_us,
+		"mat_assign_us": mat_assign_us,
+		"label_us": t2 - t1,
+		"collision_us": t3 - t2,
+	}
 
 
 func _on_tile_pressed(grid_index: int, mouse_button: int) -> void:
