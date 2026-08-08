@@ -5,7 +5,7 @@ class_name CameraController
 
 const ZOOM_STEP: float = 4.0
 const MIN_ZOOM_DISTANCE: float = 6.0
-const MAX_ZOOM_DISTANCE: float = 30.0
+const MAX_ZOOM_DISTANCE: float = 75.0
 const ROTATION_STEP: float = deg_to_rad(30)
 const MOUSE_ROTATION_SENSITIVITY: float = 0.005
 

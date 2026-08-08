@@ -1,6 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://6buicxxj4a1p"]
+[gd_scene format=3 uid="uid://6buicxxj4a1p"]
 
 [ext_resource type="Script" uid="uid://ctg4hq0pqoufy" path="res://scripts/game_controller.gd" id="1_m35v1"]
+[ext_resource type="Texture2D" uid="uid://dvrra2th1n6pv" path="res://sprites/up.png" id="2_iywne"]
+[ext_resource type="Texture2D" uid="uid://b27f65y6q3u8l" path="res://sprites/down.png" id="3_p57ef"]
+[ext_resource type="Texture2D" uid="uid://c4nijhsspvom7" path="res://sprites/left.png" id="4_u5sy4"]
+[ext_resource type="Texture2D" uid="uid://c3v7uj5ef5my4" path="res://sprites/right.png" id="5_gee14"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uwrxv"]
 sky_top_color = Color(0.26, 0.26, 0.26, 1)
@@ -45,31 +49,31 @@ shadow_offset = Vector2(3, 3)
 [sub_resource type="LabelSettings" id="LabelSettings_b1gra"]
 font_size = 18
 
-[node name="Game" type="Node3D"]
+[node name="Game" type="Node3D" unique_id=334897017]
 script = ExtResource("1_m35v1")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1551400643]
 environment = SubResource("Environment_lnu2h")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1372575795]
 transform = Transform3D(-0.061048593, -0.75101155, 0.65746087, 0, 0.65868944, 0.75241494, -0.9981348, 0.045933872, -0.040212065, 0, 0, 0)
 light_color = Color(1, 1, 0.8235294, 1)
 shadow_enabled = true
 
-[node name="cameraTwistPivot" type="Node3D" parent="."]
+[node name="cameraTwistPivot" type="Node3D" parent="." unique_id=1401139688]
 
-[node name="cameraPitchPivot" type="Node3D" parent="cameraTwistPivot"]
+[node name="cameraPitchPivot" type="Node3D" parent="cameraTwistPivot" unique_id=1485973628]
 
-[node name="Camera3D" type="Camera3D" parent="cameraTwistPivot/cameraPitchPivot"]
+[node name="Camera3D" type="Camera3D" parent="cameraTwistPivot/cameraPitchPivot" unique_id=207661757]
 transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 11.46, 6.366)
 fov = 82.0
 near = 0.039
 
-[node name="TileContainer" type="Node3D" parent="."]
+[node name="TileContainer" type="Node3D" parent="." unique_id=851822974]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1692176387]
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=530928409]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -78,7 +82,7 @@ grow_vertical = 2
 mouse_filter = 1
 color = Color(0.242188, 0.242188, 0.242188, 0)
 
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1552047535]
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
@@ -88,7 +92,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="MineCounter" type="Label" parent="CanvasLayer/Control"]
+[node name="MineCounter" type="Label" parent="CanvasLayer/Control" unique_id=1287891177]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 48.0
@@ -97,7 +101,7 @@ offset_bottom = 82.0
 text = "MINES: 999999"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="TimeElapsed" type="Label" parent="CanvasLayer/Control"]
+[node name="TimeElapsed" type="Label" parent="CanvasLayer/Control" unique_id=2110021851]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 96.0
@@ -106,7 +110,7 @@ offset_bottom = 130.0
 text = "TIME: 999:99"
 label_settings = SubResource("LabelSettings_xgd6b")
 
-[node name="Message" type="Label" parent="CanvasLayer/Control"]
+[node name="Message" type="Label" parent="CanvasLayer/Control" unique_id=902137122]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -124,7 +128,7 @@ label_settings = SubResource("LabelSettings_d4yan")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SubMessage" type="Label" parent="CanvasLayer/Control/Message"]
+[node name="SubMessage" type="Label" parent="CanvasLayer/Control/Message" unique_id=459483628]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -142,7 +146,7 @@ label_settings = SubResource("LabelSettings_yqjtg")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="3d label" type="Label" parent="CanvasLayer/Control"]
+[node name="3d label" type="Label" parent="CanvasLayer/Control" unique_id=1721480715]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -156,7 +160,7 @@ text = "3D:"
 label_settings = SubResource("LabelSettings_uwrxv")
 vertical_alignment = 1
 
-[node name="Difficulty" type="Label" parent="CanvasLayer/Control"]
+[node name="Difficulty" type="Label" parent="CanvasLayer/Control" unique_id=1540956073]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -170,7 +174,7 @@ text = "Difficulty:"
 label_settings = SubResource("LabelSettings_uwrxv")
 vertical_alignment = 1
 
-[node name="Easy" type="Button" parent="CanvasLayer/Control"]
+[node name="Easy" type="Button" parent="CanvasLayer/Control" unique_id=1547077001]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 328.0
@@ -180,7 +184,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Easy"
 
-[node name="Normal" type="Button" parent="CanvasLayer/Control"]
+[node name="Normal" type="Button" parent="CanvasLayer/Control" unique_id=446000225]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 392.0
@@ -190,7 +194,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Normal"
 
-[node name="Hard" type="Button" parent="CanvasLayer/Control"]
+[node name="Hard" type="Button" parent="CanvasLayer/Control" unique_id=541616243]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 456.0
@@ -200,7 +204,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Hard"
 
-[node name="CustomGame" type="Button" parent="CanvasLayer/Control"]
+[node name="CustomGame" type="Button" parent="CanvasLayer/Control" unique_id=1112652072]
 visible = false
 layout_mode = 0
 offset_left = 48.0
@@ -211,7 +215,7 @@ focus_mode = 1
 theme_override_font_sizes/font_size = 18
 text = "Custom game"
 
-[node name="RowCounter" type="Label" parent="CanvasLayer/Control"]
+[node name="RowCounter" type="Label" parent="CanvasLayer/Control" unique_id=1591163642]
 visible = false
 layout_mode = 0
 offset_left = 48.0
@@ -221,7 +225,7 @@ offset_bottom = 682.0
 text = "Rows: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="MineCounter2" type="Label" parent="CanvasLayer/Control"]
+[node name="MineCounter2" type="Label" parent="CanvasLayer/Control" unique_id=1999275668]
 visible = false
 layout_mode = 0
 offset_left = 48.0
@@ -231,7 +235,7 @@ offset_bottom = 754.0
 text = "Mines: 999"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="RowSlider" type="HSlider" parent="CanvasLayer/Control"]
+[node name="RowSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=526687373]
 visible = false
 layout_mode = 0
 offset_left = 48.0
@@ -244,7 +248,7 @@ max_value = 24.0
 value = 4.0
 scrollable = false
 
-[node name="MineSlider" type="HSlider" parent="CanvasLayer/Control"]
+[node name="MineSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=67490517]
 visible = false
 layout_mode = 0
 offset_left = 48.0
@@ -256,7 +260,7 @@ min_value = 5.0
 value = 5.0
 scrollable = false
 
-[node name="3dToggle" type="CheckButton" parent="CanvasLayer/Control"]
+[node name="3dToggle" type="CheckButton" parent="CanvasLayer/Control" unique_id=218928793]
 layout_mode = 0
 offset_left = 135.99998
 offset_top = 168.0
@@ -266,127 +270,164 @@ scale = Vector2(1.7, 1.7)
 button_pressed = true
 expand_icon = true
 
-[node name="GridSpacingSlider" type="HSlider" parent="CanvasLayer/Control"]
+[node name="GridSpacingSlider" type="HSlider" parent="CanvasLayer/Control" unique_id=2080174075]
 layout_mode = 0
-offset_left = 1544.0
-offset_top = 176.0
-offset_right = 1704.0
-offset_bottom = 192.0
+offset_left = 1664.0
+offset_top = 232.0
+offset_right = 1824.0
+offset_bottom = 248.0
 theme_override_constants/center_grabber = -1
 min_value = 1.0
-max_value = 2.5
+max_value = 4.0
 step = 0.5
 value = 1.5
 scrollable = false
 
-[node name="PlayInstructions" type="Label" parent="CanvasLayer/Control"]
+[node name="PlayInstructions" type="Label" parent="CanvasLayer/Control" unique_id=136920394]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -320.0
-offset_top = 24.0
-offset_right = -16.0
-offset_bottom = 64.0
+offset_left = -376.0
+offset_top = 288.0
+offset_right = -23.0
+offset_bottom = 546.0
 grow_horizontal = 0
-text = "Left click: reveal    Right click (or hold): flag
-Scroll: zoom                    Middle-drag: rotate
-Use the arrow keys to rotate the minefield"
+text = "Left click (or tap): reveal cube
+Right click (or hold): flag a mine
+Scroll: zoom in/out
+
+Middle-Mouse: rotate
+OR use the controls above for rotation
+
+For larger grids increase the grid spacing
+to view inside the minefield"
 label_settings = SubResource("LabelSettings_b1gra")
 horizontal_alignment = 2
 
-[node name="PlayInstructions2" type="Label" parent="CanvasLayer/Control"]
+[node name="Grid spacing label" type="Label" parent="CanvasLayer/Control" unique_id=1813748205]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -384.0
-offset_top = 136.0
-offset_right = -256.0
-offset_bottom = 168.0
+offset_left = -264.0
+offset_top = 192.0
+offset_right = -136.0
+offset_bottom = 224.0
 grow_horizontal = 0
 text = "Grid Spacing:"
 label_settings = SubResource("LabelSettings_b1gra")
 
-[node name="UP" type="Button" parent="CanvasLayer/Control"]
+[node name="infoButton" type="Button" parent="CanvasLayer/Control" unique_id=1985325488]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -120.0
-offset_top = 136.0
-offset_right = -70.0
-offset_bottom = 186.0
-grow_horizontal = 0
-text = "↑"
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 888.0
+offset_top = -340.0
+offset_right = 938.0
+offset_bottom = -290.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+text = "i"
 icon_alignment = 2
 
-[node name="Down" type="Button" parent="CanvasLayer/Control"]
+[node name="UP" type="Button" parent="CanvasLayer/Control" unique_id=1240577513]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -120.0
-offset_top = 200.0
-offset_right = -70.0
-offset_bottom = 250.0
+offset_left = -164.0
+offset_top = 40.0
+offset_right = 100.00049
+offset_bottom = 304.0
 grow_horizontal = 0
-text = "↓"
+scale = Vector2(0.21, 0.21)
+localize_numeral_system = false
+icon = ExtResource("2_iywne")
+flat = true
 icon_alignment = 2
 
-[node name="Left" type="Button" parent="CanvasLayer/Control"]
+[node name="Down" type="Button" parent="CanvasLayer/Control" unique_id=813430042]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -184.0
-offset_top = 200.0
-offset_right = -134.0
-offset_bottom = 250.0
+offset_left = -164.0
+offset_top = 103.97999
+offset_right = 100.0022
+offset_bottom = 367.97998
 grow_horizontal = 0
-text = "←"
+scale = Vector2(0.21, 0.21)
+icon = ExtResource("3_p57ef")
+flat = true
 icon_alignment = 2
 
-[node name="Right" type="Button" parent="CanvasLayer/Control"]
+[node name="Left" type="Button" parent="CanvasLayer/Control" unique_id=1503563788]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -56.0
-offset_top = 200.0
-offset_right = -6.0
-offset_bottom = 250.0
+offset_left = -224.0
+offset_top = 103.97999
+offset_right = 40.00061
+offset_bottom = 367.97998
 grow_horizontal = 0
-text = "→"
+scale = Vector2(0.21, 0.21)
+icon = ExtResource("4_u5sy4")
+flat = true
 icon_alignment = 2
 
-[node name="ZoomIn" type="Button" parent="CanvasLayer/Control"]
+[node name="Right" type="Button" parent="CanvasLayer/Control" unique_id=1054491531]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -184.0
-offset_top = 136.0
-offset_right = -134.0
-offset_bottom = 186.0
+offset_left = -104.0
+offset_top = 103.97999
+offset_right = 160.00049
+offset_bottom = 367.97998
 grow_horizontal = 0
+scale = Vector2(0.21, 0.21)
+icon = ExtResource("5_gee14")
+flat = true
+icon_alignment = 2
+
+[node name="ZoomIn" type="Button" parent="CanvasLayer/Control" unique_id=1059109399]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 736.0
+offset_top = -496.50003
+offset_right = 786.0
+offset_bottom = -446.50003
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
 text = "+"
 icon_alignment = 2
 
-[node name="ZoomOut" type="Button" parent="CanvasLayer/Control"]
+[node name="ZoomOut" type="Button" parent="CanvasLayer/Control" unique_id=834520083]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -56.0
-offset_top = 136.0
-offset_right = -6.0
-offset_bottom = 186.0
+offset_left = -100.625
+offset_top = 43.49997
+offset_right = -50.625
+offset_bottom = 93.49997
 grow_horizontal = 0
+theme_override_font_sizes/font_size = 30
 text = "-"
 icon_alignment = 2
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=602336563]
 
 [connection signal="pressed" from="CanvasLayer/Control/Easy" to="." method="_on_easy_pressed"]
 [connection signal="pressed" from="CanvasLayer/Control/Normal" to="." method="_on_normal_pressed"]
@@ -396,6 +437,7 @@ icon_alignment = 2
 [connection signal="value_changed" from="CanvasLayer/Control/MineSlider" to="." method="_on_mine_slider_value_changed"]
 [connection signal="pressed" from="CanvasLayer/Control/3dToggle" to="." method="_on_d_toggle_pressed"]
 [connection signal="value_changed" from="CanvasLayer/Control/GridSpacingSlider" to="." method="_on_grid_spacing_slider_value_changed"]
+[connection signal="pressed" from="CanvasLayer/Control/infoButton" to="." method="_on_info_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/Control/UP" to="." method="rotate_camera_up"]
 [connection signal="pressed" from="CanvasLayer/Control/Down" to="." method="rotate_camera_down"]
 [connection signal="pressed" from="CanvasLayer/Control/Left" to="." method="rotate_camera_left"]

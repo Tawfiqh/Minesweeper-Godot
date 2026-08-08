@@ -14,7 +14,8 @@ const CAUTION_6 = Color(baseColourSaturation, 0, baseColourSaturation)
 const CAUTION_7 = Color(baseColourSaturation, 0.1 * baseColourSaturation, baseColourSaturation)
 const CAUTION_8 = Color(baseColourSaturation, 0.2 * baseColourSaturation, baseColourSaturation)
 const SAFE = Color(0.65, 0.65, 0.65, 0.005) # Grey and transparent
-
+const FLAGGED_COLOR =  Color(0.65, 0.2, 0.2)
+const MINE_COLOR = Color(2.603, 0.252, 0.0, 1.0)
 
 @onready var mine_counter: Label = $CanvasLayer/Control/MineCounter
 @onready var time_elapsed: Label = $CanvasLayer/Control/TimeElapsed
@@ -243,14 +244,14 @@ func _material_for_tile(tile) -> Dictionary:
 
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
 	if tile.is_hidden:
-		mat.albedo_color = Color(0.5, 0.5, 0.55) if not tile.is_flagged else Color(0.85, 0.2, 0.2)
+		mat.albedo_color = Color(0.5, 0.5, 0.55) if not tile.is_flagged else FLAGGED_COLOR
 		return {"mat": mat, "new_us": t1 - t0, "assign_us": Time.get_ticks_usec() - t1}
 	match tile.state:
 		GameModel.States.SAFE:
 			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mat.albedo_color = SAFE
 		GameModel.States.MINE:
-			mat.albedo_color = Color(0.75, 0.15, 0.15) # RED
+			mat.albedo_color = MINE_COLOR # RED
 		GameModel.States.CAUTION:
 			match tile.mines_nearby:
 				1: mat.albedo_color = CAUTION_1
@@ -385,9 +386,6 @@ func _on_timer_timeout() -> void: # This is called every second
 func _on_d_toggle_pressed() -> void:
 	_new_game(previousGameDimensions, previousGamePercentageOfMines, previousGameDifficulty)
 
-const easyGameDimensions: int = 10
-const easyGamePercentageOfMines: float = 0.015
-const easyGameDifficulty: String = "Easy MODE"
 
 # Starting values can be changed later
 var previousGameDimensions: int = easyGameDimensions
@@ -412,12 +410,15 @@ func _new_game(grid_dimensions: int, percentageOfMines: float, difficulty: Strin
 	print("⛳️ %s: total_cubes: %s, numberOfMines: %s (%.2f%% of total cubes)" % [difficulty, total_cubes, numberOfMines, numberOfMines / total_cubes * 100.0])
 	generate_tiles(grid_dimensions, numberOfMines)
 
+const easyGameDimensions: int = 10
+const easyGamePercentageOfMines: float = 0.02
+const easyGameDifficulty: String = "Easy MODE"
 
 func _on_easy_pressed() -> void:
 	_new_game(easyGameDimensions, easyGamePercentageOfMines, easyGameDifficulty)
 
 func _on_normal_pressed() -> void:
-	_new_game(14, 0.15, "Medium MODE")
+	_new_game(12, 0.15, "Medium MODE")
 
 
 func _on_hard_pressed() -> void:
@@ -479,3 +480,8 @@ func zoom_in() -> void:
 
 func zoom_out() -> void:
 	camera_controller.zoom_out()
+
+
+func _on_info_button_pressed() -> void:
+	$CanvasLayer/Control/PlayInstructions.visible = !$CanvasLayer/Control/PlayInstructions.visible
+	
